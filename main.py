@@ -4,13 +4,32 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    # ######## System Dimensioning Parameters #######
+    InfP = [3]  # number of Inf Service Providers
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    Loc = [3, 5, 10]  # number of geographic locations
+
+    SP = 10  # number of Service Providers
+
+    S = [30, 80, 150]  # total number of service request -- 20
+    Load_Edge = {}
+    Load_Core = {}
+
+    # 1. AWS IoT Core --> number of connected devices (all day)
+    # 2. AWS Kinesis Firehose --> TBs per day streamed into the component
+    # 3. AWS Kinesis Data Analytics --> Processing units always active for a month
+    Load_Edge[1] = [1000, 20, 10]
+    Load_Edge[2] = [1000, 20, 10]
+    Load_Edge[3] = [1000, 20, 10]
+
+    # 1. AWS S3 --> TBs/month stored to the core cloud
+    # 2. AWS EMR (Serverless)) --> average number of vCPUs/hour utilized per day
+    # 3. AWS QuickSight --> Monthly fee for a load of Questions and Sessions
+    Load_Core[1] = [50, 100, 1]
+    Load_Core[1] = [100, 200, 1]
+    Load_Core[1] = [200, 400, 1]
+
+
+
