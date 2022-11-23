@@ -59,13 +59,13 @@ if __name__ == '__main__':
 
     cost['IoT'] = 0.096/(10**6)  # cost per minutes of connection
     cost['Firehose'] = 0.034  # cost per GB
-    cost['Analytics'] = 0.127/60  # cost per minutes per processing unit
+    cost['Analytics'] = 0.127  # cost per hour per processing unit
     cost['S3'] = 0.024  # cost per GB of data stored
-    cost['EMR'] = 0.06/60  # cost per vCPU per minute
+    cost['EMR'] = 0.06  # cost per vCPU per hour
     cost['Quick'] = 34/30  # cost per day
 
     # Providers follow
-    bid_markup = 1.5
+    bid_markup = 1 # %100 - double the cost
 
     # ##### Service Characteristics
     # mean default load of service requests # we consider the AWS connected mobility service presented in the example
@@ -98,10 +98,10 @@ if __name__ == '__main__':
         for L in Loc:
             for top in range(1,random_topologies):
                 # create topology
-                T = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
+                T,max_Caps = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
                 # Providers place bids for their resources
-                B = bidding(T, cost, bid_markup)
+                B = bidding(T, cost, bid_markup, max_Caps)
 
                 # Generate Requests for different total loads
                 req = dict()
@@ -110,4 +110,4 @@ if __name__ == '__main__':
                     # create requests
                     req[S] = generate_service_requests(S, L, Load_Core[1], Load_Edge[1], price_s, prob_region)
 
-
+                    # The decentralized platform determines the resource allocation

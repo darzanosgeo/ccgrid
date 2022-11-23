@@ -2,22 +2,38 @@
 from sympy import Symbol, Function
 
 
+##########################################################################
 ################### bidding functions per service component type
-# bid per number of minutes per connected device per day
+
+# IoT core - bid per number of minutes per connected device per day
 # estimates the charge per day of l devices are connected all day
-def b_iot(l, c, m): return c * 60 * 24 * l * m
+def b_iot(l, c, m): return c * (60 * 24 * l) * m
 
 
-# bid per number of TBs feed into the Firehose component per day
-def b_fir(l, c, m): return c * 1000 * l * m
+# Firehose - bid per number of TBs feed into the Firehose component per day
+def b_fir(l, c, m): return c * (1000 * l) * m
 
 
-# bid per number of processing units active per day
-def b_ana(l, c, m): return c * 60 * 24 * l * m
+# Analytics - bid per number of processing units active per day
+def b_ana(l, c, m): return c * (24 * l) * m
 
+
+# S3 - bid per data stored or accessed per day
+def b_s(l, c, m): return c * (l * 1000 / 30) * m
+
+
+# EMR - bid per vCPU/hour utilized per day
+def b_emr(l, c, m): return c * l * m
+
+
+# QuickSight - bid per day
+def b_qui(l, c, m): return c * l * m
+
+
+##########################################################################
 
 # A load-based bidding function is assigned to each resource
-def B_f(cur_type, cur_capacity, cost, markup):
+def B_f(cur_type, cost, markup):
     l = Symbol('l')
     if cur_type == 'IoT':
         # bid = cur_capacity * cost[cur_type]
@@ -28,17 +44,19 @@ def B_f(cur_type, cur_capacity, cost, markup):
     elif cur_type == 'Analytics':
         bid = b_ana(l, cost[cur_type], markup)
     elif cur_type == 'S3':
-        bid = cur_capacity * cost[cur_type]
+        bid = b_s(l, cost[cur_type], markup)
     elif cur_type == 'EMR':
-        bid = cur_capacity * cost[cur_type]
+        bid = b_emr(l, cost[cur_type], markup)
     elif cur_type == 'Quick':
-        bid = cur_capacity * cost[cur_type]
+        bid = b_qui(l, cost[cur_type], markup)
     else:
         print('There is a type that is not on the list')
     return bid
 
 
-def bidding(T, cost, markup):
+##############################################################################
+
+def bidding(T, cost, markup,max_caps):
     B = dict()
 
     # for each resource in topology
@@ -50,6 +68,15 @@ def bidding(T, cost, markup):
         cur_type = r[2]
         cur_capacity = T[r]
 
+        # The markup use by each Provider depends on its resource capacity in the respective site
+        # So the markup is a value
+        #  ------ slightly greater than 1 (almost no markup) for Providers with high resource capacity
+        #  ------- almost equal to 'markup' for Providers with low capacity
+        # This tries to immitate the economy of scale, i.e, the fact that
+        # the marginal cost of Providers with increased capacity will be lower
+        max_capacity = max_caps[cur_type]
+        mark = 1 + markup * (cur_capacity / max_capacity)
+
         # estimate the bid for this resource
-        B[cur_prov, cur_loc, cur_type] = B_f(cur_type, cur_capacity, cost, markup)
+        B[cur_prov, cur_loc, cur_type] = B_f(cur_type, cost, mark)
     return B
