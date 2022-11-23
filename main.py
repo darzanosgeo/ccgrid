@@ -1,13 +1,6 @@
-# This is a sample Python script.
-import numpy as np
 from create_topology import create_topology
 from generate_service_requests import generate_service_requests
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-# Press the green button in the gutter to run the script.
+from bidding import bidding
 
 
 if __name__ == '__main__':
@@ -60,6 +53,16 @@ if __name__ == '__main__':
             resource_profile_small[r_type] = 10**6  # THIS IN FACT MEANS NO LIMITATION
             resource_profile_large[r_type] = 10**6
 
+    # Cost per unit of resource based on AWS prices
+    cost = dict()
+
+    cost['IoT'] = 0.096/(10**6)  # cost per minutes of connection
+    cost['Firehose'] = 0.034  # cost per GB
+    cost['Analytics'] = 0.127/60  # cost per minutes per processing unit
+    cost['S3'] = 0.024 # cost per GB of data stored
+    cost['EMR'] = 0.06/60 # cost per vCPU per minute
+    cost['Quick'] = 34 # cost per month
+
 
     # ##### Service Characteristics
     # mean default load of service requests # we consider the AWS connected mobility service presented in the example
@@ -68,12 +71,12 @@ if __name__ == '__main__':
     # 1. AWS IoT Core --> number of connected devices (all day)
     # 2. AWS Kinesis Firehose --> TBs per day streamed into the component
     # 3. AWS Kinesis Data Analytics --> Processing units always active for a month
-    Load_Edge[1] = [1000, 20, 10]
+    Load_Edge[1] = {'IoT': 1000, 'Firehose': 20, 'Analytics': 10}
 
     # 1. AWS S3 --> TBs/month stored to the core cloud
     # 2. AWS EMR (Serverless)) --> average number of vCPUs/hour utilized per day
     # 3. AWS QuickSight --> Monthly fee for a load of Questions and Sessions
-    Load_Core[1] = [50, 100, 1]
+    Load_Core[1] = {'S3': 50, 'EMR': 100, 'Quick': 1}
     # Load_Core[1] = [100, 200, 1]
     # Load_Core[1] = [200, 400, 1]
 
@@ -94,7 +97,14 @@ if __name__ == '__main__':
                 # create topology
                 T = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
-                # Generate Requests for different global loads
+                # Providers place bids for their resources
+                B = bidding(T, cost)
+
+                # Generate Requests for different total loads
                 req = dict()
+                # for different total loads -- number of total requests
                 for S in SS:
-                    req[S] = generate_service_requests(S, L, Load_Core, Load_Edge, price_s, prob_region)
+                    # create requests
+                    req[S] = generate_service_requests(S, L, Load_Core[1], Load_Edge[1], price_s, prob_region)
+
+

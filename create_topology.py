@@ -3,7 +3,7 @@ import random
 
 
 def create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types):
-    T = {}
+    T = dict()
     # assign providers to multiple locations
     for i in range(1,I+1):
         #put each provider to at least one location
@@ -15,9 +15,9 @@ def create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resour
                     # assign resource capacities to the different providers
                     #randomly chose small or large resource profiles -- with a probability
                     if random.random() > ResProf_prob:
-                        T[i, l, r_type] = np.round(np.random.normal(1, 0.2, 1) * resource_profile_small[r_type])
+                        T[i, l, r_type] = int(np.random.normal(1, 0.2, 1) * resource_profile_small[r_type])
                     else:
-                        T[i, l, r_type] = np.round(np.random.normal(1, 0.2, 1) * resource_profile_large[r_type])
+                        T[i, l, r_type] = int(np.random.normal(1, 0.2, 1) * resource_profile_large[r_type])
 
 
     #check if at least one provider has presence in each location
@@ -32,8 +32,8 @@ def create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resour
                 # assign resource capacities to the different providers
                 # randomly chose small or large resource profiles -- with a probability
                 if random.random() > ResProf_prob:
-                    T[ii, l, r_type] = np.round(np.random.normal(1, 0.2, 1) * resource_profile_small[r_type])
+                    T[ii, l, r_type] = int(np.random.normal(1, 0.2, 1) * resource_profile_small[r_type])
                 else:
-                    T[ii, l, r_type] = np.round(np.random.normal(1, 0.2, 1) * resource_profile_large[r_type])
+                    T[ii, l, r_type] = int(np.random.normal(1, 0.2, 1) * resource_profile_large[r_type])
 
     return T
