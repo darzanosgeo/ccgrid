@@ -54,15 +54,18 @@ if __name__ == '__main__':
             resource_profile_large[r_type] = 10**6
 
     # Cost per unit of resource based on AWS prices
+    # We assume that these are the cost values based on which the Providers determine their bids
     cost = dict()
 
     cost['IoT'] = 0.096/(10**6)  # cost per minutes of connection
     cost['Firehose'] = 0.034  # cost per GB
     cost['Analytics'] = 0.127/60  # cost per minutes per processing unit
-    cost['S3'] = 0.024 # cost per GB of data stored
-    cost['EMR'] = 0.06/60 # cost per vCPU per minute
-    cost['Quick'] = 34 # cost per month
+    cost['S3'] = 0.024  # cost per GB of data stored
+    cost['EMR'] = 0.06/60  # cost per vCPU per minute
+    cost['Quick'] = 34/30  # cost per day
 
+    # Providers follow
+    bid_markup = 1.5
 
     # ##### Service Characteristics
     # mean default load of service requests # we consider the AWS connected mobility service presented in the example
@@ -70,7 +73,7 @@ if __name__ == '__main__':
     Load_Core = dict()
     # 1. AWS IoT Core --> number of connected devices (all day)
     # 2. AWS Kinesis Firehose --> TBs per day streamed into the component
-    # 3. AWS Kinesis Data Analytics --> Processing units always active for a month
+    # 3. AWS Kinesis Data Analytics --> Processing units always active per day
     Load_Edge[1] = {'IoT': 1000, 'Firehose': 20, 'Analytics': 10}
 
     # 1. AWS S3 --> TBs/month stored to the core cloud
@@ -98,7 +101,7 @@ if __name__ == '__main__':
                 T = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
                 # Providers place bids for their resources
-                B = bidding(T, cost)
+                B = bidding(T, cost, bid_markup)
 
                 # Generate Requests for different total loads
                 req = dict()
