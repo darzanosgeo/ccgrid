@@ -68,12 +68,12 @@ if __name__ == '__main__':
     # 1. AWS IoT Core --> number of connected devices (all day)
     # 2. AWS Kinesis Firehose --> TBs per day streamed into the component
     # 3. AWS Kinesis Data Analytics --> Processing units always active for a month
-    Load_Edge[1] = [1000, 20, 10]
+    Load_Edge[1] = {'IoT': 1000, 'Firehose': 20, 'Analytics': 10}
 
     # 1. AWS S3 --> TBs/month stored to the core cloud
     # 2. AWS EMR (Serverless)) --> average number of vCPUs/hour utilized per day
     # 3. AWS QuickSight --> Monthly fee for a load of Questions and Sessions
-    Load_Core[1] = [50, 100, 1]
+    Load_Core[1] = {'S3': 50, 'EMR': 100, 'Quick': 1}
     # Load_Core[1] = [100, 200, 1]
     # Load_Core[1] = [200, 400, 1]
 
@@ -94,7 +94,14 @@ if __name__ == '__main__':
                 # create topology
                 T = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
-                # Generate Requests for different global loads
+                # Providers place bids for their resources
+
+
+                # Generate Requests for different total loads
                 req = dict()
+                # for different total loads -- number of total requests
                 for S in SS:
-                    req[S] = generate_service_requests(S, L, Load_Core, Load_Edge, price_s, prob_region)
+                    # create requests
+                    req[S] = generate_service_requests(S, L, Load_Core[1], Load_Edge[1], price_s, prob_region)
+
+
