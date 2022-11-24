@@ -36,9 +36,7 @@ def b_qui(l, c, m): return c * l * m
 def B_f(cur_type, cost, markup):
     l = Symbol('l')
     if cur_type == 'IoT':
-        # bid = cur_capacity * cost[cur_type]
         bid = b_iot(l, cost[cur_type], markup)
-        # test = bid.subs(l,1)
     elif cur_type == 'Firehose':
         bid = b_fir(l, cost[cur_type], markup)
     elif cur_type == 'Analytics':
