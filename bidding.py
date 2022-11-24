@@ -36,9 +36,7 @@ def b_qui(l, c, m): return c * l * m
 def B_f(cur_type, cost, markup):
     l = Symbol('l')
     if cur_type == 'IoT':
-        # bid = cur_capacity * cost[cur_type]
         bid = b_iot(l, cost[cur_type], markup)
-        # test = bid.subs(l,1)
     elif cur_type == 'Firehose':
         bid = b_fir(l, cost[cur_type], markup)
     elif cur_type == 'Analytics':
@@ -56,9 +54,11 @@ def B_f(cur_type, cost, markup):
 
 ##############################################################################
 
-def bidding(T, cost, markup,max_caps):
+def bidding(I, T, cost, markup,max_caps):
     B = dict()
-
+    B_i = dict()
+    for i in range(1,I+1):
+        B_i[i] = dict()
     # for each resource in topology
 
     for r in T:
@@ -78,5 +78,7 @@ def bidding(T, cost, markup,max_caps):
         mark = 1 + markup * (cur_capacity / max_capacity)
 
         # estimate the bid for this resource
-        B[cur_prov, cur_loc, cur_type] = B_f(cur_type, cost, mark)
-    return B
+        val = B_f(cur_type, cost, mark)
+        B[cur_prov, cur_loc, cur_type] = val
+        B_i[cur_prov][cur_prov, cur_loc, cur_type] = val
+    return B, B_i
