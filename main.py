@@ -18,7 +18,7 @@ if __name__ == '__main__':
     Loc = [3]
     Loc_prob = 0.4  # region density --- probability for a Provider to appear in a region
 
-    SS = [10, 50, 100, 150, 200, 250, 300]  # total number of service request
+    SS = [20, 50, 100, 150, 200, 250, 300]  # total number of service request
 
     random_topologies = 10  # number of random topologies
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     # Load_Core[1] = [200, 400, 1]
 
     # service price base
-    price_s_base = 2400  # $/hour
+    price_s_base = 1000  # $/hour
 
     # probability of addition service region
     prob_region = 0.2
@@ -130,4 +130,4 @@ if __name__ == '__main__':
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L)
 
                     # Perform Revenue Sharing
-                    compensations = VCG_revenue_sharing(X,total_Profit, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)
+                    compensations, profits = VCG_revenue_sharing(X,total_Profit, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)

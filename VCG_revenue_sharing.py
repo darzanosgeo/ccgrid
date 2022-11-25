@@ -5,6 +5,7 @@ from resource_allocation import resource_allocation
 
 def VCG_revenue_sharing(X, tot_prof, R, R_i, B_i, req, B, price, I, resource_types, L):
     revenues = dict()
+    profit = dict()
     # for each Infrastructure Provider
     for i in range(1, I + 1):
         R_no_i = dict()
@@ -30,6 +31,6 @@ def VCG_revenue_sharing(X, tot_prof, R, R_i, B_i, req, B, price, I, resource_typ
         X_no_i, tot_prof_no_i, serv_prov_no_i, serv_prov_perc_no_i = resource_allocation(R_no_i, R_i_no_i, req, B_no_i, price, I, resource_types, L)
 
         # estimate the compensation of provider 'i'
-        revenues[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X, req, R_no_i, B_no_i))
-    revenues = 0
-    return revenues
+        revenues[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
+        profit[i] = revenues[i] - K(X, req, R_i[i], B)
+    return revenues, profit
