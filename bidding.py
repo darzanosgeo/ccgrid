@@ -1,5 +1,5 @@
 # In this script, we define the bidding for each resource
-from sympy import Symbol, Function
+from sympy import Symbol
 
 
 ##########################################################################
@@ -82,3 +82,33 @@ def bidding(I, T, cost, markup,max_caps):
         B[cur_prov, cur_loc, cur_type] = val
         B_i[cur_prov][cur_prov, cur_loc, cur_type] = val
     return B, B_i
+
+
+def place_higher_bid(B, B_i, i, R_i):
+    B_h = B.copy()
+    B_i_h = B_i.copy()
+    for j in B_i:
+        B_i_h[j] = B_i[j].copy()
+
+    for r in R_i[i]:
+        cur_loc = r[1]
+        cur_type = r[2]
+        val = B[i, cur_loc, cur_type] * 1.1
+        B_h[i, cur_loc, cur_type] = val
+        B_i_h[i][i, cur_loc, cur_type] = val
+    return B_h,B_i_h
+
+
+def place_lower_bid(B, B_i, i, R_i):
+    B_l = B.copy()
+    B_i_l = B_i.copy()
+    for j in B_i:
+        B_i_l[j] = B_i[j].copy()
+
+    for r in R_i[i]:
+        cur_loc = r[1]
+        cur_type = r[2]
+        val = B[i, cur_loc, cur_type] * 0.9
+        B_l[i, cur_loc, cur_type] = val
+        B_i_l[i][i, cur_loc, cur_type] = val
+    return B_l, B_i_l

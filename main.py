@@ -1,6 +1,6 @@
 from create_topology import create_topology
 from generate_service_requests import generate_service_requests
-from bidding import bidding
+from bidding import bidding, place_higher_bid, place_lower_bid
 from resource_allocation import resource_allocation
 from VCG_revenue_sharing import VCG_revenue_sharing
 from system_model_functions import U, K
@@ -13,12 +13,12 @@ if __name__ == '__main__':
 
     # ######## System Dimensioning Parameters
     #InfP = [10]  # number of Inf Service Providers
-    InfP = [5]
+    InfP = [3]
     #Loc = [5]  # number of geographic locations
-    Loc = [3]
-    Loc_prob = 0.4  # region density --- probability for a Provider to appear in a region
+    Loc = [2]
+    Loc_prob = 1 #0.4  # region density --- probability for a Provider to appear in a region
 
-    SS = [20, 50, 100, 150, 200, 250, 300]  # total number of service request
+    SS = [2, 10, 50, 100, 150, 200, 250, 300]  # total number of service request
 
     random_topologies = 10  # number of random topologies
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     # Load_Core[1] = [200, 400, 1]
 
     # service price base
-    price_s_base = 1000  # $/hour
+    price_s_base = 1500  # $/hour
 
     # probability of addition service region
     prob_region = 0.2
@@ -130,4 +130,47 @@ if __name__ == '__main__':
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L)
 
                     # Perform Revenue Sharing
-                    compensations, profits = VCG_revenue_sharing(X,total_Profit, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)
+                    coeff, revenues = VCG_revenue_sharing(X,total_Profit, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)
+
+                    # select one provider that places a higher and lower bid - select the provider with the highest profits
+                    i = max(revenues, key=revenues.get)
+
+                    # set higher price
+                    B_h, B_i_h = place_higher_bid(B, B_i, i, R_i)
+                    X_h, total_Profit_h, serv_prov_h, serv_Prov_perc_h = resource_allocation(R, R_i, req[S], B_h, price[S], I,
+                                                                                     resource_types, L)
+                    coeff_h, revenues_h = VCG_revenue_sharing(X_h, total_Profit_h, R, R_i, B_i_h, req[S], B_h, price[S], I,
+                                                                 resource_types, L)
+
+                    # set lower price
+                    B_l, B_i_l = place_lower_bid(B, B_i, i, R_i)
+                    X_l, total_Profit_l, serv_prov_l, serv_Prov_perc_l = resource_allocation(R, R_i, req[S], B_l,
+                                                                                             price[S], I,
+                                                                                             resource_types, L)
+                    coeff_l, revenues_l = VCG_revenue_sharing(X_l, total_Profit_h, R, R_i, B_i_l, req[S], B_l,
+                                                                     price[S], I,
+                                                                     resource_types, L)
+
+                    profit = dict()
+                    profit_h = dict()
+                    profit_l = dict()
+                    for ii in range(1, I+1):
+                        profit[ii] = revenues[ii] - K(X, req[S], R_i[ii], B)
+                        profit_h[ii] = revenues_h[ii] - K(X_h, req[S], R_i[ii], B)
+                        profit_l[ii] = revenues_l[ii] - K(X_l, req[S], R_i[ii], B)
+                        # profit[ii] = coeff[ii] - K(X, req[S], R_i[ii], B)
+                        # profit_h[ii] = coeff_h[ii] - K(X_h, req[S], R_i[ii], B)
+                        # profit_l[ii] = coeff_l[ii] - K(X_l, req[S], R_i[ii], B)
+
+                    print(i)
+                    print(profit)
+                    print(profit_h)
+                    print(profit_l)
+                    print(sum(profit.values()))
+                    print(sum(profit_h.values()))
+                    print(sum(profit_l.values()))
+                    print(total_Profit)
+
+                    test = 0
+
+
