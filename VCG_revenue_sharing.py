@@ -7,6 +7,7 @@ from resource_allocation import resource_allocation
 def VCG_revenue_sharing(X, tot_prof, R, R_i, B_i, req, B, price, I, resource_types, L):
     # revenues = dict()
     coeff = dict()
+    MC = dict()
     revenue = dict()
     # for each Infrastructure Provider
     for i in range(1, I + 1):
@@ -35,18 +36,20 @@ def VCG_revenue_sharing(X, tot_prof, R, R_i, B_i, req, B, price, I, resource_typ
         # estimate the compensation of provider 'i'
         #revenues[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
         # coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
-        coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
+        #coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
+        MC[i] = (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
 
     for i in range(1, I+1):
         #profit[i] = (U(X, req, R, price) - K(X, req, R, B)) * coeff[i]/sum(coeff.values())
         #revenue[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) * (coeff[i] / (sum(coeff.values())+coeff[i]))
         #revenue[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) * (coeff[i]/(sum(coeff.values())-coeff[i]+max(coeff.values())))
-        second_price = max(coeff.values())
-        for _ in coeff:
-            if coeff[_] > coeff[i] and coeff[_] < second_price :
-                second_price = coeff[_]
-
+        # second_price = max(coeff.values())
+        # for _ in coeff:
+        #     if coeff[_] > coeff[i] and coeff[_] < second_price:
+        #         second_price = coeff[_]
+        #
         #revenue[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) * (coeff[i] / (sum(coeff.values())-coeff[i]+second_price))
         #revenue[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) * (coeff[i] / (sum(coeff.values()) - coeff[i] + second_price))
-        revenue[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) * ((coeff[i]**2) / (sum(coeff.values())**2))
+        #revenue[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) * ((coeff[i]**2) / (sum(coeff.values())**2))
+        revenue[i] = K(X, req, R_i[i], B) + (MC[i]/sum(MC.values())) * (U(X, req, R, price) - K(X, req, R, B))
     return coeff, revenue
