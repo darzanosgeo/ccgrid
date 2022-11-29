@@ -4,6 +4,7 @@ from bidding import bidding, place_higher_bid, place_lower_bid
 from resource_allocation import resource_allocation
 from VCG_revenue_sharing import VCG_revenue_sharing
 from system_model_functions import U, K
+import numpy as np
 
 
 if __name__ == '__main__':
@@ -126,20 +127,37 @@ if __name__ == '__main__':
                             req[S].pop(s)
                             price[S].pop(s)
 
-                    # The decentralized platform determines the resource allocation
+                    ################
+                    # Resource allocation if each Cloud Provider Operated alone
+                    X_a = {}
+                    total_Profit_a = {}
+                    serv_prov_a = {}
+                    serv_Prov_perc_a = {}
+                    for i in range(1, I+1):
+                        #set to zero capacity the resources of all other providers
+                        R_a = {key: 0 for key in R}
+                        for _ in R_i[i]:
+                            R_a[_] = R_i[i][_]
+
+                        X_a[i], total_Profit_a[i], serv_prov_a[i], serv_Prov_perc_a[i] = resource_allocation(R_a, R_i, req[S], B, price[S], I,
+                                                                                     resource_types, L)
+
+
+                    ##############
+                    # The decentralized platform determines the resource allocation for the federated scenario
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L)
 
                     # Perform Revenue Sharing
-                    coeff, revenues = VCG_revenue_sharing(X,total_Profit, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)
+                    coeff, revenues, revenues_s = VCG_revenue_sharing(X,total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)
 
                     # select one provider that places a higher and lower bid - select the provider with the highest profits
-                    i = max(revenues, key=revenues.get)
+                    i = np.random.randint(1,I+1)
 
                     # set higher price
                     B_h, B_i_h = place_higher_bid(B, B_i, i, R_i)
                     X_h, total_Profit_h, serv_prov_h, serv_Prov_perc_h = resource_allocation(R, R_i, req[S], B_h, price[S], I,
                                                                                      resource_types, L)
-                    coeff_h, revenues_h = VCG_revenue_sharing(X_h, total_Profit_h, R, R_i, B_i_h, req[S], B_h, price[S], I,
+                    coeff_h, revenues_h,  revenues_s_h = VCG_revenue_sharing(X_h, total_Profit_a, R, R_i, B_i_h, req[S], B_h, price[S], I,
                                                                  resource_types, L)
 
                     # set lower price
@@ -147,17 +165,26 @@ if __name__ == '__main__':
                     X_l, total_Profit_l, serv_prov_l, serv_Prov_perc_l = resource_allocation(R, R_i, req[S], B_l,
                                                                                              price[S], I,
                                                                                              resource_types, L)
-                    coeff_l, revenues_l = VCG_revenue_sharing(X_l, total_Profit_h, R, R_i, B_i_l, req[S], B_l,
+                    coeff_l, revenues_l, revenues_s_l = VCG_revenue_sharing(X_l, total_Profit_a, R, R_i, B_i_l, req[S], B_l,
                                                                      price[S], I,
                                                                      resource_types, L)
+
+                    if coeff[i] - K(X, req[S], R_i[i], B) < coeff_l[i] - K(X_l, req[S], R_i[i], B):
+                        stop = 1
 
                     profit = dict()
                     profit_h = dict()
                     profit_l = dict()
+                    profit_s = dict()
+                    profit_s_h = dict()
+                    profit_s_l = dict()
                     for ii in range(1, I+1):
                         profit[ii] = revenues[ii] - K(X, req[S], R_i[ii], B)
                         profit_h[ii] = revenues_h[ii] - K(X_h, req[S], R_i[ii], B)
                         profit_l[ii] = revenues_l[ii] - K(X_l, req[S], R_i[ii], B)
+                        profit_s[ii] = revenues_s[ii] - K(X, req[S], R_i[ii], B)
+                        profit_s_h[ii] = revenues_s_h[ii] - K(X_h, req[S], R_i[ii], B)
+                        profit_s_l[ii] = revenues_s_l[ii] - K(X_l, req[S], R_i[ii], B)
                         # profit[ii] = coeff[ii] - K(X, req[S], R_i[ii], B)
                         # profit_h[ii] = coeff_h[ii] - K(X_h, req[S], R_i[ii], B)
                         # profit_l[ii] = coeff_l[ii] - K(X_l, req[S], R_i[ii], B)
@@ -170,6 +197,21 @@ if __name__ == '__main__':
                     print(sum(profit_h.values()))
                     print(sum(profit_l.values()))
                     print(total_Profit)
+
+                    print(profit_s)
+                    print(profit_s_h)
+                    print(profit_s_l)
+                    print(sum(profit_s.values()))
+                    print(sum(profit_s_h.values()))
+                    print(sum(profit_s_l.values()))
+                    print(total_Profit)
+
+                    print(total_Profit_a)
+
+                    if profit_s[i] < profit_s_l[i] or profit_s[i] < profit_s_h[i]:
+                        test = 0
+                    if profit[i] < profit_l[i] or profit[i] < profit_h[i]:
+                        test = 0
 
                     test = 0
 

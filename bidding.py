@@ -93,7 +93,7 @@ def place_higher_bid(B, B_i, i, R_i):
     for r in R_i[i]:
         cur_loc = r[1]
         cur_type = r[2]
-        val = B[i, cur_loc, cur_type] * 1.1
+        val = B[i, cur_loc, cur_type] * 1.2
         B_h[i, cur_loc, cur_type] = val
         B_i_h[i][i, cur_loc, cur_type] = val
     return B_h,B_i_h
@@ -108,7 +108,7 @@ def place_lower_bid(B, B_i, i, R_i):
     for r in R_i[i]:
         cur_loc = r[1]
         cur_type = r[2]
-        val = B[i, cur_loc, cur_type] * 0.9
+        val = B[i, cur_loc, cur_type] * 0.8
         B_l[i, cur_loc, cur_type] = val
         B_i_l[i][i, cur_loc, cur_type] = val
     return B_l, B_i_l
