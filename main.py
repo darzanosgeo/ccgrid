@@ -19,7 +19,7 @@ if __name__ == '__main__':
     Loc = [2]
     Loc_prob = 1 #0.4  # region density --- probability for a Provider to appear in a region
 
-    SS = [2, 10, 50, 100, 150, 200, 250, 300]  # total number of service request
+    SS = [2, 5, 10, 50, 100, 150, 200, 250, 300]  # total number of service request
 
     random_topologies = 10  # number of random topologies
 

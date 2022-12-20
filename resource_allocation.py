@@ -93,6 +93,13 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L, ):
             for sigma in S[s]:
                 x[r, s, sigma] = sol_var[count]
                 count += 1
+                if x[r, s, sigma] > 0.99:
+                    x[r, s, sigma] = 1
+                elif x[r, s, sigma] <0.01:
+                    x[r, s, sigma] = 0
+                else:
+                    stop = 0
+
 
     # double check results
     Total_Profit = U(x, S, R, price) - K(x, S, R, B)
@@ -116,5 +123,6 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L, ):
 
         serv_prov.append(serv_provisioned)
     serv_Prov_perc = serv_prov.count(1)/len(serv_prov)
+
 
     return x, Total_Profit, serv_prov, serv_Prov_perc

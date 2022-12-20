@@ -27,8 +27,8 @@ def VCG_revenue_sharing(X, tot_prof_a, R, R_i, B_i, req, B, price, I, resource_t
             else:
                 R_i_no_i[ii] = {key: 0 for key in R_i[ii]}
                 R_no_i.update(R_i_no_i[ii])
-                # B_i_no_i[ii] = {key: 10**6 for key in B_i[ii]}
-                B_no_i.update(B_i[ii])
+                B_i_no_i[ii] = {key: B_i[ii][key] * 10**6 for key in B_i[ii]}
+                B_no_i.update(B_i_no_i[ii])
 
         # estimate the resource allocation if Provider 'i' do not participate in the federation
         X_no_i, tot_prof_no_i, serv_prov_no_i, serv_prov_perc_no_i = resource_allocation(R_no_i, R_i_no_i, req, B_no_i, price, I, resource_types, L)
@@ -55,7 +55,7 @@ def VCG_revenue_sharing(X, tot_prof_a, R, R_i, B_i, req, B, price, I, resource_t
         #revenue[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) * ((coeff[i]**2) / (sum(coeff.values())**2))
         # revenue[i] = coeff[i] + (U(X, req, R, price) - sum(coeff.values()))*(K(X, req, R_i[i], B)/K(X, req, R, B))
         #revenue[i] = coeff[i] + (U(X, req, R, price) - sum(coeff.values()))/I
-        revenue[i] = coeff[i] + U(X, req, R, price) * (tot_prof_a[i]/(.5*sum(tot_prof_a.values())))
+        revenue[i] = coeff[i] + U(X, req, R, price) * (tot_prof_a[i]/(1.8*sum(tot_prof_a.values())))
         #revenue[i] = coeff[i] + (U(X, req, R, price) - sum(coeff.values())) * (coeff[i] / (sum(coeff.values())))
         revenue_s[i] = coeff[i] + (U(X, req, R, price) - sum(coeff.values())) * (tot_prof_a[i]/sum(tot_prof_a.values()))
     return coeff, revenue, revenue_s
