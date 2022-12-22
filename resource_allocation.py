@@ -4,7 +4,7 @@ from gurobipy import GRB
 from system_model_functions import U, K, z
 
 
-def resource_allocation(R, R_i, S, B, price, I, resource_types, L, ):
+def resource_allocation(R, R_i, S, B, price, I, resource_types, L):
     m = gp.Model('Allocation')
 
     #########################
@@ -19,7 +19,7 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L, ):
     ########################
     # Generate Objective Function
     obj = gp.quicksum(gp.quicksum(gp.quicksum(
-        (price[s] * x_vars[r, s, sigma] / len(S[s])) - x_vars[r, s, sigma] * B[r].subs('l', S[s][sigma]['load'])
+        x_vars[r, s, sigma] * ((price[s] / len(S[s])) - B[r].subs('l', S[s][sigma]['load']))
         for sigma in S[s])
                                   for s in S)
                       for r in R)
@@ -40,13 +40,18 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L, ):
         for sigma in S[s]:
             m.addConstr(gp.quicksum(x_vars[r, s, sigma] for r in R) <= 1, name='comp_to_res')
 
-    # the assigned resource should be of the appropriate type and in the appropriate location
+    # the assigned resource should be  in the appropriate location
     for r in R:
         for s in S:
             for sigma in S[s]:
-                m.addConstr(
-                    x_vars[r, s, sigma] == x_vars[r, s, sigma] * z(r, S[s][sigma]['type'], S[s][sigma]['region']),
-                    name='type_location')
+                m.addConstr(x_vars[r, s, sigma] * (r[1] -S[s][sigma]['region']) * S[s][sigma]['region'] == 0, name='location')
+
+    # the assigned resource should be of the appropriate type
+    for r in R:
+        for s in S:
+            for sigma in S[s]:
+                temp_val = z(r, S[s][sigma]['type'], r[1])
+                m.addConstr(x_vars[r, s, sigma] * (1 - temp_val) == 0, name='type')
 
     # capacity constraint
     for i in range(1, I + 1):
@@ -105,6 +110,9 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L, ):
     Total_Profit = U(x, S, R, price) - K(x, S, R, B)
     if round(Total_Profit) == round(sol_obj):
         print("We are OK")
+    else:
+        stop = 1
+
 
     # services that eventually provisioned
     serv_prov = []
