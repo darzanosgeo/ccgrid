@@ -4,7 +4,7 @@ def U(X, S, R, price):
     for r in R:
         for s in S:
             for sigma in S[s]:
-                sum_U += price[s] * X[r, s, sigma] / (len(S[s]))
+                sum_U = sum_U + X[r, s, sigma] * (price[s] / (len(S[s])))
     return sum_U
 
 
@@ -14,20 +14,15 @@ def K(X, S, R, B):
     for r in R:
         for s in S:
             for sigma in S[s]:
-                sum_K += X[r, s, sigma] * B[r].subs('l', S[s][sigma]['load'])
+                sum_K = sum_K + X[r, s, sigma] * B[r].subs('l', S[s][sigma]['load'])
     return sum_K
 
 
 # indicator functions
 def z(r, t, l):
-    if l != 0:
-        if r[1] == l and r[2] == t:
-            return 1
-        else:
-            return 0
+    if r[1] == l and r[2] == t:
+        return 1
     else:
-        if r[2] == t:
-            return 1
-        else:
-            return 0
+        return 0
+
 

@@ -13,13 +13,13 @@ if __name__ == '__main__':
     ##############################
 
     # ######## System Dimensioning Parameters
-    #InfP = [10]  # number of Inf Service Providers
-    InfP = [3]
-    #Loc = [5]  # number of geographic locations
-    Loc = [2]
-    Loc_prob = 1 #0.4  # region density --- probability for a Provider to appear in a region
+    InfP = [3]  # number of Inf Service Providers
 
-    SS = [2, 5, 10, 50, 100, 150, 200, 250, 300]  # total number of service request
+    Loc = [2]  # number of geographic locations
+
+    Loc_prob = 0.4 # region density --- probability for a Provider to appear in a region
+
+    SS = [1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300]  # total number of service request
 
     random_topologies = 10  # number of random topologies
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
                     coeff, revenues, revenues_s = VCG_revenue_sharing(X,total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)
 
                     # select one provider that places a higher and lower bid - select the provider with the highest profits
-                    i = np.random.randint(1,I+1)
+                    i = np.random.randint(1, I+1)
 
                     # set higher price
                     B_h, B_i_h = place_higher_bid(B, B_i, i, R_i)
