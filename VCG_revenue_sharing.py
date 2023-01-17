@@ -4,7 +4,7 @@ from resource_allocation import resource_allocation
 
 
 
-def VCG_revenue_sharing(X, tot_prof_a, R, R_i, B_i, req, B, price, I, resource_types, L):
+def VCG_revenue_sharing(X, tot_prof_a, R, R_i, B_i, req, B, price, I, resource_types, L, price_m):
     # revenues = dict()
     coeff = dict()
     revenue = dict()
@@ -31,15 +31,16 @@ def VCG_revenue_sharing(X, tot_prof_a, R, R_i, B_i, req, B, price, I, resource_t
                 B_no_i.update(B_i_no_i[ii].copy())
 
         # estimate the resource allocation if Provider 'i' do not participate in the federation
-        X_no_i, tot_prof_no_i, serv_prov_no_i, serv_prov_perc_no_i = resource_allocation(R_no_i, R_i_no_i, req, B_no_i, price, I, resource_types, L)
+        X_no_i, tot_prof_no_i, serv_prov_no_i, serv_prov_perc_no_i = resource_allocation(R_no_i, R_i_no_i, req, B_no_i, price, I, resource_types, L, price_m)
 
         # estimate the compensation of provider 'i'
         coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
+        #coeff[i] = (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i)) - (U(X, req, R, price) - K(X, req, R, B)) + (U(X, req, R_i[i], price) - K(X, req, R_i[i], B))
 
         if coeff[i] < -0.01 or coeff[i] < K(X, req, R_i[i], B):
             print(coeff[i],K(X, req, R_i[i], B))
             stop = 1
-        elif sum(coeff.values()) > U(X, req, R, price):
+        if sum(coeff.values()) > U(X, req, R, price):
             print(sum(coeff.values()), U(X, req, R, price))
             stop = 1
 

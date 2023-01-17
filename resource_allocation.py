@@ -4,7 +4,7 @@ from gurobipy import GRB
 from system_model_functions import U, K, z
 
 
-def resource_allocation(R, R_i, S, B, price, I, resource_types, L):
+def resource_allocation(R, R_i, S, B, price, I, resource_types, L,price_m):
     m = gp.Model('Allocation')
 
     #########################
@@ -74,7 +74,7 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L):
     for s in S:
         m.addConstr(gp.quicksum(gp.quicksum(x_vars[r, s, sigma] * B[r].subs('l', S[s][sigma]['load'])
                                             for sigma in S[s])
-                                for r in R)
+                                for r in R) + price_m
                     <= price[s], name='price_cost')
 
     ########################

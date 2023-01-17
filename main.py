@@ -1,3 +1,5 @@
+from FirstPriceAuction import FirstPriceAuction
+from FirstPriceAuctionAdapted import FirstPriceAuctionAdapted
 from create_topology import create_topology
 from generate_service_requests import generate_service_requests
 from bidding import bidding, place_higher_bid, place_lower_bid
@@ -94,6 +96,8 @@ if __name__ == '__main__':
     # probability of addition service region
     prob_region = 0.2
 
+    # blockchain markup price
+    price_m = 0 # $/request
     ###############################
     #       Init Process          #
     ##############################
@@ -140,15 +144,16 @@ if __name__ == '__main__':
                             R_a[_] = R_i[i][_]
 
                         X_a[i], total_Profit_a[i], serv_prov_a[i], serv_Prov_perc_a[i] = resource_allocation(R_a, R_i, req[S], B, price[S], I,
-                                                                                     resource_types, L)
+                                                                                     resource_types, L, 0)
 
 
                     ##############
                     # The decentralized platform determines the resource allocation for the federated scenario
-                    X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L)
+                    X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
-                    coeff, revenues, revenues_s = VCG_revenue_sharing(X,total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L)
+                    FPA_revenues, FPA_prices = FirstPriceAuction(X, total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)
+                    coeff, revenues, revenues_s = VCG_revenue_sharing(X,total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L,price_m)
 
                     # select one provider that places a higher and lower bid - select the provider with the highest profits
                     i = np.random.randint(1, I+1)
@@ -156,18 +161,23 @@ if __name__ == '__main__':
                     # set higher price
                     B_h, B_i_h = place_higher_bid(B, B_i, i, R_i)
                     X_h, total_Profit_h, serv_prov_h, serv_Prov_perc_h = resource_allocation(R, R_i, req[S], B_h, price[S], I,
-                                                                                     resource_types, L)
+                                                                                     resource_types, L, price_m)
+                    FPA_revenues_h, FPA_prices_h = FirstPriceAuction(X_h, total_Profit_a, R, R_i, B_i_h, req[S], B_h, price[S], I,
+                                                                 resource_types, L, price_m)
                     coeff_h, revenues_h,  revenues_s_h = VCG_revenue_sharing(X_h, total_Profit_a, R, R_i, B_i_h, req[S], B_h, price[S], I,
-                                                                 resource_types, L)
+                                                                 resource_types, L, price_m)
 
                     # set lower price
                     B_l, B_i_l = place_lower_bid(B, B_i, i, R_i)
                     X_l, total_Profit_l, serv_prov_l, serv_Prov_perc_l = resource_allocation(R, R_i, req[S], B_l,
                                                                                              price[S], I,
-                                                                                             resource_types, L)
+                                                                                             resource_types, L, price_m)
+                    FPA_revenues_l, FPA_prices_l = FirstPriceAuction(X_l, total_Profit_a, R, R_i, B_i_l, req[S], B_l,
+                                                                     price[S], I,
+                                                                     resource_types, L, price_m)
                     coeff_l, revenues_l, revenues_s_l = VCG_revenue_sharing(X_l, total_Profit_a, R, R_i, B_i_l, req[S], B_l,
                                                                      price[S], I,
-                                                                     resource_types, L)
+                                                                     resource_types, L, price_m)
 
                     if coeff[i] - K(X, req[S], R_i[i], B) < coeff_l[i] - K(X_l, req[S], R_i[i], B):
                         stop = 1
@@ -178,6 +188,9 @@ if __name__ == '__main__':
                     profit_s = dict()
                     profit_s_h = dict()
                     profit_s_l = dict()
+                    FPA_profit = dict()
+                    FPA_profit_h = dict()
+                    FPA_profit_l = dict()
                     for ii in range(1, I+1):
                         profit[ii] = revenues[ii] - K(X, req[S], R_i[ii], B)
                         profit_h[ii] = revenues_h[ii] - K(X_h, req[S], R_i[ii], B)
@@ -185,11 +198,30 @@ if __name__ == '__main__':
                         profit_s[ii] = revenues_s[ii] - K(X, req[S], R_i[ii], B)
                         profit_s_h[ii] = revenues_s_h[ii] - K(X_h, req[S], R_i[ii], B)
                         profit_s_l[ii] = revenues_s_l[ii] - K(X_l, req[S], R_i[ii], B)
+                        FPA_profit[ii] = FPA_revenues[ii] - K(X, req[S], R_i[ii], B)
+                        FPA_profit_h[ii] = FPA_revenues_h[ii] - K(X_h, req[S], R_i[ii], B)
+                        FPA_profit_l[ii] = FPA_revenues_l[ii] - K(X_l, req[S], R_i[ii], B)
                         # profit[ii] = coeff[ii] - K(X, req[S], R_i[ii], B)
                         # profit_h[ii] = coeff_h[ii] - K(X_h, req[S], R_i[ii], B)
                         # profit_l[ii] = coeff_l[ii] - K(X_l, req[S], R_i[ii], B)
 
                     print(i)
+                    print(FPA_profit)
+                    print(FPA_profit_h)
+                    print(FPA_profit_l)
+                    print(sum(FPA_profit.values()))
+                    print(sum(FPA_profit_h.values()))
+                    print(sum(FPA_profit_l.values()))
+
+                    print(profit_s)
+                    print(profit_s_h)
+                    print(profit_s_l)
+                    print(sum(profit_s.values()))
+                    print(sum(profit_s_h.values()))
+                    print(sum(profit_s_l.values()))
+                    #print(K(X, req[S], R, B))
+                    print(total_Profit)
+
                     print(profit)
                     print(profit_h)
                     print(profit_l)
@@ -198,14 +230,7 @@ if __name__ == '__main__':
                     print(sum(profit_l.values()))
                     print(total_Profit)
 
-                    print(profit_s)
-                    print(profit_s_h)
-                    print(profit_s_l)
-                    print(sum(profit_s.values()))
-                    print(sum(profit_s_h.values()))
-                    print(sum(profit_s_l.values()))
-                    #print(total_Profit)
-                    print(K(X, req[S], R, B))
+
 
                     print(total_Profit_a)
 
