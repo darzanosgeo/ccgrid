@@ -1,5 +1,6 @@
 from FirstPriceAuction import FirstPriceAuction
 from FirstPriceAuctionAdapted import FirstPriceAuctionAdapted
+from MTHG import MTHG
 from create_topology import create_topology
 from generate_service_requests import generate_service_requests
 from bidding import bidding, place_higher_bid, place_lower_bid
@@ -19,7 +20,7 @@ if __name__ == '__main__':
 
     Loc = [2]  # number of geographic locations
 
-    Loc_prob = 0.4 # region density --- probability for a Provider to appear in a region
+    Loc_prob = 0.5 # region density --- probability for a Provider to appear in a region
 
     SS = [1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300]  # total number of service request
 
@@ -150,6 +151,8 @@ if __name__ == '__main__':
                     ##############
                     # The decentralized platform determines the resource allocation for the federated scenario
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
+
+                    X_hr, total_profit_hr, serv_prov, serv_Prov_perc = MTHG(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
                     FPA_revenues, FPA_prices = FirstPriceAuction(X, total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)

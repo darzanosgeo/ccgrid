@@ -44,13 +44,17 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L,price_m):
     for r in R:
         for s in S:
             for sigma in S[s]:
-                m.addConstr(x_vars[r, s, sigma] * (r[1] -S[s][sigma]['region']) * S[s][sigma]['region'] == 0, name='location')
+                m.addConstr(x_vars[r, s, sigma] * (r[1] - S[s][sigma]['region']) * S[s][sigma]['region'] == 0,
+                            name='location')
 
     # the assigned resource should be of the appropriate type
     for r in R:
         for s in S:
             for sigma in S[s]:
-                temp_val = z(r, S[s][sigma]['type'], r[1])
+                if S[s][sigma]['type'] == r[2]:
+                    temp_val = 1
+                else:
+                    temp_val = 0
                 m.addConstr(x_vars[r, s, sigma] * (1 - temp_val) == 0, name='type')
 
     # capacity constraint
