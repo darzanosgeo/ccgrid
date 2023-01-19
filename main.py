@@ -8,6 +8,7 @@ from resource_allocation import resource_allocation
 from VCG_revenue_sharing import VCG_revenue_sharing
 from system_model_functions import U, K
 import numpy as np
+from copy import deepcopy
 
 
 if __name__ == '__main__':
@@ -114,7 +115,7 @@ if __name__ == '__main__':
                 B, B_i = bidding(I, R, cost, bid_markup, max_Caps)
 
                 # Generate Requests for different total loads
-                tot_S = SS[-1];
+                tot_S = SS[-1]
                 # create requests
                 req_tot, req_tot_price = generate_service_requests(tot_S, L, Load_Core[1], Load_Edge[1], price_s_base,
                                                              prob_region)
@@ -123,8 +124,8 @@ if __name__ == '__main__':
                     req = dict()
                     price = dict()
 
-                    req[S] = req_tot.copy()
-                    price[S] = req_tot_price.copy()
+                    req[S] = deepcopy(req_tot)
+                    price[S] = deepcopy(req_tot_price)
 
                     # Pick only the first S requests for this simulation
                     for s in range(1, SS[-1]+1):
@@ -147,12 +148,16 @@ if __name__ == '__main__':
                         X_a[i], total_Profit_a[i], serv_prov_a[i], serv_Prov_perc_a[i] = resource_allocation(R_a, R_i, req[S], B, price[S], I,
                                                                                      resource_types, L, 0)
 
-
+                    Rtemp = {}
+                    for _ in R:
+                        Rtemp[_] = R[_]
+                    if Rtemp is R:
+                        stop = 0
                     ##############
                     # The decentralized platform determines the resource allocation for the federated scenario
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
 
-                    X_hr, total_profit_hr, serv_prov, serv_Prov_perc = MTHG(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
+                    X_hr, total_profit_hr, serv_prov_hr, serv_Prov_perc_hr = MTHG(deepcopy(R), deepcopy(R_i), req[S], B, price[S], I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
                     FPA_revenues, FPA_prices = FirstPriceAuction(X, total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)
@@ -224,6 +229,7 @@ if __name__ == '__main__':
                     print(sum(profit_s_l.values()))
                     #print(K(X, req[S], R, B))
                     print(total_Profit)
+                    print((U(X_hr, req[S], R, price[S]) - K(X_hr, req[S], R, B)))
 
                     print(profit)
                     print(profit_h)

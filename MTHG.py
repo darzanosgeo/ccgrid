@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 #desirability
 def desir(s,S, sigma,r,B,price_s,price_m):
     #p_sigma = (price_s-price_m)/len(S[s])
@@ -44,6 +47,7 @@ def MTHG(R, R_i, S, B, price, I, resource_types, L, price_m):
         for sigma in S[s]:
             sigma_prov[s, sigma] = 0
             sigma_bid[s,sigma] = 0
+            ############
             feasible_res[s,sigma] = []
             desirability[s, sigma] = dict()
             maxdes[s,sigma] = 0
@@ -80,6 +84,8 @@ def MTHG(R, R_i, S, B, price, I, resource_types, L, price_m):
                     if S[s][sigma]['region'] != r[1] and S[s][sigma]['region'] != 0:
                         continue
 
+                    if sigma == 5:
+                        stop = 0
                     # check if the budget is feasible
                     # We find how many components of the service remain unsigned
                     # and how much budget has not been consumed,
@@ -103,7 +109,8 @@ def MTHG(R, R_i, S, B, price, I, resource_types, L, price_m):
                 # if there is no feasible resource for component sigma, then service s cannot be served
                 if len(feasible_res[s,sigma]) == 0:
                     #infeas_serv[s] = 1
-                    break
+                    continue
+
                 # if there is no feasible resource for component sigma
                 else:
                     # select the resource with the highest desirability
@@ -111,9 +118,12 @@ def MTHG(R, R_i, S, B, price, I, resource_types, L, price_m):
                     maxdes_r[s, sigma] = max(desirability[s, sigma], key=desirability[s, sigma].get)
                     #if there are multiple feasible solutions, then find the second most desirable
                     if len(feasible_res[s,sigma]) > 1:
-                        temp = desirability[s, sigma].copy()
+                        temp = deepcopy(desirability[s, sigma])
                         temp.pop(maxdes_r[s, sigma])
-                        maxdes2[s, sigma] = max(temp.values())
+                        try:
+                            maxdes2[s, sigma] = max(temp.values())
+                        except:
+                            stop = 0
                         maxdes2_r[s, sigma] = max(temp, key=temp.get)
 
                     des = maxdes[s, sigma] - maxdes2[s, sigma]
@@ -128,6 +138,7 @@ def MTHG(R, R_i, S, B, price, I, resource_types, L, price_m):
             # reduce the capacity of the assigned resource
             R[winner[0]] = R[winner[0]] - S[winner[1]][winner[2]]['load']
 
+            sigma_bid[winner[1],winner[2]] = B[winner[0]].subs('l', S[winner[1]][winner[2]]['load'])
             sigma_prov[winner[1],winner[2]] = 1
             cur_unassigned -= 1
             for sig in S[winner[1]]:
@@ -140,24 +151,111 @@ def MTHG(R, R_i, S, B, price, I, resource_types, L, price_m):
         else:
             stop = 0
 
+        for s in S:
+            for sigma in S[s]:
+                feasible_res[s, sigma] = []
+                desirability[s, sigma] = dict()
+                maxdes[s, sigma] = 0
+                maxdes_r[s, sigma] = []
+                maxdes2[s, sigma] = 0
+                maxdes2_r[s, sigma] = []
 
-    # services that eventually provisioned
-    serv_prov = []
-    for s in S:
-        serv_provisioned = 1
-        for sigma in S[s]:
-            comp_provisioned = 0
-            for r in R:
-                if X[r, s, sigma] == 1:
-                    comp_provisioned = 1
+
+    ############################################################################################
+    ##### IMPROVEMENT STEP
+    # For the services that remain unassigned sort them based on the number of components that remains unassigned
+    # For those that have equal number of pending components short the based on value/price of the service
+    # Fit as many services as possible
+
+    # comp_count = dict()
+    # for s in S:
+    #     if s_prov[s] == 0:
+    #         for sigma in S[s]:
+    #             if sigma_prov[s, sigma] == 1:
+    #                 comp_count[s] += 1
+    #                 sigma_prov[s, sigma] = 0
+    #
+    # # the maximum number of iteration is the number of unassigned service
+    # for iter in range(1,len(comp_count)+1):
+    #
+    #     # if len(comp_count) == 0:
+    #     #     break
+    #
+    #     # maximum number of components
+    #     max_comp = max(comp_count.values())
+    #
+    #     max_val = 0
+    #     choice = 0
+    #     for s in S:
+    #         if s_prov[s] == 0 and comp_count[s] == max_comp:
+    #             if price[s] > max_val:
+    #                 choice = s
+    #
+    #     for sigma in S[choice]:
+    #         for r in R:
+    #             # check if the capacity is feasible
+    #             if S[choice][sigma]['load'] >= R[r]:
+    #                 continue
+    #
+    #             # check if the resource type is feasible
+    #             if S[choice][sigma]['type'] != r[2]:
+    #                 continue
+    #
+    #             # check if the location is feasible
+    #             if S[choice][sigma]['region'] != r[1] and S[choice][sigma]['region'] != 0:
+    #                 continue
+    #
+    #             sig_counter = 0
+    #             sig_bid = 0
+    #             # find the number of unassigned components and the remaining budget
+    #             for sig in S[choice]:
+    #                 if sigma_prov[choice, sig] != 0:
+    #                     sig_counter += 1
+    #                     sig_bid += sigma_bid[choice, sig]
+    #             # after dividing the remaining budget equally to the remaining components
+    #             # determine if budget of component sigma is enough to pay resource r
+    #             if (price[choice] - price_m - sig_bid) / (len(S[choice]) - sig_counter) <= B[r].subs('l', S[choice][sigma]['load']):
+    #                 continue
+    #
+    #             # mark this resource as feasible assignment for component sigma
+    #             feasible_res[choice, sigma].append(r)
+    #             desirability[choice, sigma][r] = desir(choice, S, sigma, r, B, price[choice], price_m)
+    #
+    #         # if there is no feasible resource for component sigma, then service s cannot be served
+    #         if len(feasible_res[choice, sigma]) == 0:
+    #             continue
+    #         else:
+    #             # select the resource with the highest desirability
+    #             maxdes[choice, sigma] = max(desirability[choice, sigma].values())
+    #             maxdes_r[choice, sigma] = max(desirability[choice, sigma], key=desirability[choice, sigma].get)
+
+                #JUST add to the best resource -- EXAMINE USING CAPACITY INSTEAD OF DES?!
+
+
+
+    ##################################################################################################
+        # services that eventually provisioned
+        serv_prov = []
+        for s in S:
+            serv_provisioned = 1
+            for sigma in S[s]:
+                comp_provisioned = 0
+                for r in R:
+                    if X[r, s, sigma] == 1:
+                        comp_provisioned = 1
+                        break
+
+                if comp_provisioned == 0:
+                    serv_provisioned = 0
                     break
 
-            if comp_provisioned == 0:
-                serv_provisioned = 0
-                break
+            serv_prov.append(serv_provisioned)
+        serv_Prov_perc = serv_prov.count(1) / len(serv_prov)
 
-        serv_prov.append(serv_provisioned)
-    serv_Prov_perc = serv_prov.count(1) / len(serv_prov)
-
+    for s in S:
+        if s_prov[s] == 0:
+            for sigma in S[s]:
+                for r in R:
+                    X[r, s, sigma] = 0
 
     return X, total_profit, serv_prov, serv_Prov_perc

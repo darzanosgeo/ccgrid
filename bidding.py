@@ -1,4 +1,6 @@
 # In this script, we define the bidding for each resource
+from copy import deepcopy
+
 from sympy import Symbol
 
 
@@ -85,10 +87,10 @@ def bidding(I, T, cost, markup,max_caps):
 
 
 def place_higher_bid(B, B_i, i, R_i):
-    B_h = B.copy()
-    B_i_h = B_i.copy()
+    B_h = deepcopy(B)
+    B_i_h = deepcopy(B_i)
     for j in B_i:
-        B_i_h[j] = B_i[j].copy()
+        B_i_h[j] = deepcopy(B_i[j])
 
     for r in R_i[i]:
         cur_loc = r[1]
@@ -100,10 +102,10 @@ def place_higher_bid(B, B_i, i, R_i):
 
 
 def place_lower_bid(B, B_i, i, R_i):
-    B_l = B.copy()
-    B_i_l = B_i.copy()
+    B_l = deepcopy(B)
+    B_i_l = deepcopy(B_i)
     for j in B_i:
-        B_i_l[j] = B_i[j].copy()
+        B_i_l[j] = deepcopy(B_i[j])
 
     for r in R_i[i]:
         cur_loc = r[1]
