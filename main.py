@@ -24,7 +24,7 @@ if __name__ == '__main__':
     Loc_prob = 0.5 # region density --- probability for a Provider to appear in a region
 
     SS = [1, 2, 5, 10, 20, 50, 100, 150, 200, 250, 300]  # total number of service request
-
+    #SS = [10, 20, 50, 100, 150, 200, 250, 300]  # total number of service request
     random_topologies = 10  # number of random topologies
 
     # ##### Resources Characteristics
@@ -41,22 +41,32 @@ if __name__ == '__main__':
             # number of IoT Devices can be supported by a single providers in a single location
             resource_profile_small[r_type] = 10000
             resource_profile_large[r_type] = 50000
+            # resource_profile_small[r_type] = 3000
+            # resource_profile_large[r_type] = 15000
         elif r_type == 'Firehose':
             # maximum number of TBs that can be streamed into Firehose resources
             resource_profile_small[r_type] = 200
             resource_profile_large[r_type] = 1000
+            # resource_profile_small[r_type] = 60
+            # resource_profile_large[r_type] = 300
         elif r_type == 'Analytics':
             # number of Data Analytics processing units available by each Provider in each region
             resource_profile_small[r_type] = 100
             resource_profile_large[r_type] = 500
+            # resource_profile_small[r_type] = 30
+            # resource_profile_large[r_type] = 150
         elif r_type == 'S3':
             # maximum number of TBs can be stored by each Provider in each region
             resource_profile_small[r_type] = 500
             resource_profile_large[r_type] = 2500
+            # resource_profile_small[r_type] = 150
+            # resource_profile_large[r_type] = 750
         elif r_type == 'EMR':
             # number of vCPUs maintained by a single providers in a single location
             resource_profile_small[r_type] = 1000
             resource_profile_large[r_type] = 5000
+            # resource_profile_small[r_type] = 150
+            # resource_profile_large[r_type] = 750
         elif r_type == 'Quick':
             # number of Qyicksight instances can be supported by a single providers in a single location
             resource_profile_small[r_type] = 10**6  # THIS IN FACT MEANS NO LIMITATION
@@ -229,6 +239,7 @@ if __name__ == '__main__':
                     print(sum(profit_s_l.values()))
                     #print(K(X, req[S], R, B))
                     print(total_Profit)
+                    print(total_profit_hr)
                     print((U(X_hr, req[S], R, price[S]) - K(X_hr, req[S], R, B)))
 
                     print(profit)
