@@ -5,7 +5,8 @@ from copy import deepcopy
 def desir(s, S, sigma, r, B, price_s, price_m):
     # p_sigma = (price_s-price_m)/len(S[s])
     # d = p_sigma/B[r].subs('l', S[s][sigma]['load'])
-    d = (price_s - price_m) / B[r].subs('l', S[s][sigma]['load'])
+    #d = (price_s - price_m) / B[r].subs('l', S[s][sigma]['load'])
+    d = (price_s - price_m) / len(S[s]) / B[r].subs('l', S[s][sigma]['load'])
     return d
 
 
