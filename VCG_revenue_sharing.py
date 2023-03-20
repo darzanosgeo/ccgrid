@@ -57,11 +57,7 @@ def VCG_revenue_sharing(X, tot_prof_a, R, R_i, B_i, req, B, price, I, resource_t
             stop = 1
 
     for i in range(1, I+1):
-
-        #revenue[i] = coeff[i] + U(X, req, R, price) * (tot_prof_a[i] / sum(tot_prof_a.values()))
-        #revenue[i] = coeff[i] + U(X, req, R, price) * (1 - serv_prov_perc_no_i)
         revenue[i] = coeff[i]
-        #revenue_s[i] = coeff[i] + (U(X, req, R, price) - sum(coeff.values())) * (tot_prof_a[i]/sum(tot_prof_a.values()))
         revenue_s[i] = coeff[i]
-        # revenue[i] = coeff[i] + U(X, req, R, price) * (tot_prof_a[i] / (1.8 * sum(tot_prof_a.values())))
+
     return coeff, revenue, revenue_s
