@@ -1,0 +1,695 @@
+
+--- New experiment --
+Providers = 3
+Topology = 1
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 5174.78570063781
+Solver_util = 1.0
+Greedy_Total_Profit = 5174.78570063781
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 1
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 9199.23930460225
+Solver_util = 1.0
+Greedy_Total_Profit = 9195.04184774565
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 1
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 17710.1643358101
+Solver_util = 0.95
+Greedy_Total_Profit = 17638.3414962687
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 1
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 24781.9887841975
+Solver_util = 0.9666666666666667
+Greedy_Total_Profit = 24641.6120886977
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 1
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 44630.0051737776
+Solver_util = 0.88
+Greedy_Total_Profit = 43260.9395066794
+Greedy_util = 0.86
+
+
+--- New experiment --
+Providers = 3
+Topology = 1
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 57071.0656887126
+Solver_util = 0.6285714285714286
+Greedy_Total_Profit = 51980.8625279355
+Greedy_util = 0.6142857142857143
+
+
+--- New experiment --
+Providers = 3
+Topology = 1
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 63848.1557747048
+Solver_util = 0.47
+Greedy_Total_Profit = 56161.7602665427
+Greedy_util = 0.43
+
+
+--- New experiment --
+Providers = 3
+Topology = 2
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 4533.84711450886
+Solver_util = 1.0
+Greedy_Total_Profit = 4533.84983601506
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 2
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 9968.71392482449
+Solver_util = 1.0
+Greedy_Total_Profit = 9968.10570733978
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 2
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 21463.4570941860
+Solver_util = 1.0
+Greedy_Total_Profit = 21454.1531773485
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 2
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 28525.3568418452
+Solver_util = 0.8
+Greedy_Total_Profit = 26803.8905861202
+Greedy_util = 0.8
+
+
+--- New experiment --
+Providers = 3
+Topology = 2
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 44044.5536953352
+Solver_util = 0.66
+Greedy_Total_Profit = 40753.7340763644
+Greedy_util = 0.66
+
+
+--- New experiment --
+Providers = 3
+Topology = 2
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 49756.3449725207
+Solver_util = 0.6
+Greedy_Total_Profit = 46286.9344416694
+Greedy_util = 0.6
+
+
+--- New experiment --
+Providers = 3
+Topology = 2
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 58107.0485537270
+Solver_util = 0.49
+Greedy_Total_Profit = 50833.2001025614
+Greedy_util = 0.47
+
+
+--- New experiment --
+Providers = 3
+Topology = 3
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 5950.06297572478
+Solver_util = 1.0
+Greedy_Total_Profit = 5950.06297572478
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 3
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 12585.7673233468
+Solver_util = 1.0
+Greedy_Total_Profit = 12585.3927884506
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 3
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 21450.0278249360
+Solver_util = 0.75
+Greedy_Total_Profit = 21261.7313754458
+Greedy_util = 0.75
+
+
+--- New experiment --
+Providers = 3
+Topology = 3
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 25660.8170857336
+Solver_util = 0.6
+Greedy_Total_Profit = 25524.1478251161
+Greedy_util = 0.6
+
+
+--- New experiment --
+Providers = 3
+Topology = 3
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 33289.7883709040
+Solver_util = 0.5
+Greedy_Total_Profit = 31986.5663494497
+Greedy_util = 0.44
+
+
+--- New experiment --
+Providers = 3
+Topology = 3
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 36441.8226026145
+Solver_util = 0.37142857142857144
+Greedy_Total_Profit = 32419.4159348130
+Greedy_util = 0.3
+
+
+--- New experiment --
+Providers = 3
+Topology = 3
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 40808.2040222531
+Solver_util = 0.28
+Greedy_Total_Profit = 32997.3340554975
+Greedy_util = 0.21
+
+
+--- New experiment --
+Providers = 3
+Topology = 4
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 4102.36475454587
+Solver_util = 1.0
+Greedy_Total_Profit = 4102.36475454587
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 4
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 10243.7914938078
+Solver_util = 1.0
+Greedy_Total_Profit = 10243.3857736927
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 4
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 17512.2879831782
+Solver_util = 0.95
+Greedy_Total_Profit = 17511.2100517204
+Greedy_util = 0.95
+
+
+--- New experiment --
+Providers = 3
+Topology = 4
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 28348.0400530855
+Solver_util = 0.9666666666666667
+Greedy_Total_Profit = 28340.6666234515
+Greedy_util = 0.9666666666666667
+
+
+--- New experiment --
+Providers = 3
+Topology = 4
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 46237.0706778604
+Solver_util = 0.9
+Greedy_Total_Profit = 45439.5124659129
+Greedy_util = 0.94
+
+
+--- New experiment --
+Providers = 3
+Topology = 4
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 59070.0751279118
+Solver_util = 0.7142857142857143
+Greedy_Total_Profit = 54062.2852860188
+Greedy_util = 0.6714285714285714
+
+
+--- New experiment --
+Providers = 3
+Topology = 4
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 67943.1570105753
+Solver_util = 0.56
+Greedy_Total_Profit = 56271.0939881585
+Greedy_util = 0.48
+
+
+--- New experiment --
+Providers = 3
+Topology = 5
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 6433.15400255686
+Solver_util = 1.0
+Greedy_Total_Profit = 6433.15400255686
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 5
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 12188.3673432132
+Solver_util = 1.0
+Greedy_Total_Profit = 12187.8049512688
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 5
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 20462.8256310017
+Solver_util = 0.9
+Greedy_Total_Profit = 20355.3884365128
+Greedy_util = 0.9
+
+
+--- New experiment --
+Providers = 3
+Topology = 5
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 27163.1999864345
+Solver_util = 0.7333333333333333
+Greedy_Total_Profit = 26545.9570427222
+Greedy_util = 0.7333333333333333
+
+
+--- New experiment --
+Providers = 3
+Topology = 5
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 38787.4800782784
+Solver_util = 0.66
+Greedy_Total_Profit = 38056.5272478085
+Greedy_util = 0.7
+
+
+--- New experiment --
+Providers = 3
+Topology = 5
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 48965.2183705437
+Solver_util = 0.5714285714285714
+Greedy_Total_Profit = 47183.8775562240
+Greedy_util = 0.5857142857142857
+
+
+--- New experiment --
+Providers = 3
+Topology = 5
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 57986.0329709189
+Solver_util = 0.5
+Greedy_Total_Profit = 52453.8968323409
+Greedy_util = 0.47
+
+
+--- New experiment --
+Providers = 3
+Topology = 6
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 4576.54527647066
+Solver_util = 1.0
+Greedy_Total_Profit = 4576.54527647066
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 6
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 12716.3254441999
+Solver_util = 1.0
+Greedy_Total_Profit = 12716.5182054722
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 6
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 26098.3902362047
+Solver_util = 1.0
+Greedy_Total_Profit = 26047.1204365416
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 6
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 34359.9795608103
+Solver_util = 0.9666666666666667
+Greedy_Total_Profit = 34323.3020753869
+Greedy_util = 0.9666666666666667
+
+
+--- New experiment --
+Providers = 3
+Topology = 6
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 56710.1352754798
+Solver_util = 0.98
+Greedy_Total_Profit = 56658.2705675742
+Greedy_util = 0.98
+
+
+--- New experiment --
+Providers = 3
+Topology = 6
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 74430.8981386407
+Solver_util = 0.9285714285714286
+Greedy_Total_Profit = 73069.9984296440
+Greedy_util = 0.9
+
+
+--- New experiment --
+Providers = 3
+Topology = 6
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 96125.3464761140
+Solver_util = 0.8
+Greedy_Total_Profit = 90821.8952365557
+Greedy_util = 0.75
+
+
+--- New experiment --
+Providers = 3
+Topology = 7
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 5782.61183064689
+Solver_util = 1.0
+Greedy_Total_Profit = 5782.61183064689
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 7
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 11029.1717623153
+Solver_util = 1.0
+Greedy_Total_Profit = 11028.5315264962
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 7
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 23468.7738079848
+Solver_util = 1.0
+Greedy_Total_Profit = 23466.1625502353
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 7
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 36493.9892516467
+Solver_util = 1.0
+Greedy_Total_Profit = 36402.1522156880
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 7
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 53988.3945295185
+Solver_util = 0.9
+Greedy_Total_Profit = 53014.7049817362
+Greedy_util = 0.88
+
+
+--- New experiment --
+Providers = 3
+Topology = 7
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 69593.8225101171
+Solver_util = 0.8
+Greedy_Total_Profit = 63827.0694594231
+Greedy_util = 0.7714285714285715
+
+
+--- New experiment --
+Providers = 3
+Topology = 7
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 77726.6571690074
+Solver_util = 0.58
+Greedy_Total_Profit = 69455.5563842973
+Greedy_util = 0.53
+
+
+--- New experiment --
+Providers = 3
+Topology = 8
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 5827.91130264038
+Solver_util = 1.0
+Greedy_Total_Profit = 5827.91130264038
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 8
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 11991.5831403259
+Solver_util = 1.0
+Greedy_Total_Profit = 11989.5361072249
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 8
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 20409.2939002153
+Solver_util = 1.0
+Greedy_Total_Profit = 20408.9550049471
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 8
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 28917.9386546484
+Solver_util = 0.9666666666666667
+Greedy_Total_Profit = 28868.4655501200
+Greedy_util = 0.9666666666666667
+
+
+--- New experiment --
+Providers = 3
+Topology = 8
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 42743.2177670303
+Solver_util = 0.8
+Greedy_Total_Profit = 41039.0959254980
+Greedy_util = 0.78
+
+
+--- New experiment --
+Providers = 3
+Topology = 8
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 50415.3779500620
+Solver_util = 0.6428571428571429
+Greedy_Total_Profit = 45353.4217833286
+Greedy_util = 0.6
+
+
+--- New experiment --
+Providers = 3
+Topology = 8
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 57624.3648833494
+Solver_util = 0.47
+Greedy_Total_Profit = 47834.3520490909
+Greedy_util = 0.43
+
+
+--- New experiment --
+Providers = 3
+Topology = 9
+Locations = 2
+Requests = 5
+Solver_Total_Profit = 5143.97980561113
+Solver_util = 1.0
+Greedy_Total_Profit = 5143.97980561113
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 9
+Locations = 2
+Requests = 10
+Solver_Total_Profit = 12440.8828681805
+Solver_util = 1.0
+Greedy_Total_Profit = 12440.7820811605
+Greedy_util = 1.0
+
+
+--- New experiment --
+Providers = 3
+Topology = 9
+Locations = 2
+Requests = 20
+Solver_Total_Profit = 20914.9870036093
+Solver_util = 0.9
+Greedy_Total_Profit = 20902.4188329144
+Greedy_util = 0.9
+
+
+--- New experiment --
+Providers = 3
+Topology = 9
+Locations = 2
+Requests = 30
+Solver_Total_Profit = 30055.7657810645
+Solver_util = 0.9
+Greedy_Total_Profit = 29977.3507578178
+Greedy_util = 0.9
+
+
+--- New experiment --
+Providers = 3
+Topology = 9
+Locations = 2
+Requests = 50
+Solver_Total_Profit = 51289.5408790262
+Solver_util = 0.92
+Greedy_Total_Profit = 51163.4439544297
+Greedy_util = 0.92
+
+
+--- New experiment --
+Providers = 3
+Topology = 9
+Locations = 2
+Requests = 70
+Solver_Total_Profit = 63800.4723568566
+Solver_util = 0.8857142857142857
+Greedy_Total_Profit = 63051.6497031060
+Greedy_util = 0.8714285714285714
+
+--- New experiment --
+Providers = 3
+Topology = 9
+Locations = 2
+Requests = 100
+Solver_Total_Profit = 68973.8369125038
+Solver_util = 0.45
+Greedy_Total_Profit = 60436.1720981282
+Greedy_util = 0.42
+
+
+
+

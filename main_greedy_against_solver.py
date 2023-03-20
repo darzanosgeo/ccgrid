@@ -17,9 +17,9 @@ if __name__ == '__main__':
     ##############################
 
     # ######## System Dimensioning Parameters
-    InfP = [3, 5, 10]  # number of Inf Service Providers
+    InfP = [5, 10]  # number of Inf Service Providers
 
-    Loc = [2, 3, 5]  # number of geographic locations
+    Loc = [3, 5]  # number of geographic locations
 
     Loc_prob = 0.3 # region density --- probability for a Provider to appear in a region
 
@@ -116,7 +116,11 @@ if __name__ == '__main__':
     # for all combinations of number of Providers/ number Regions/number of random topologies per combination of number Providers and number of Regions
     for I in InfP:
         for L in Loc:
+            if I == 5 and L == 5:
+                continue
             for top in range(1,random_topologies):
+                # if I == 3 and L == 2 and top <= 8:
+                #     continue
                 # create topology
                 R, R_i, max_Caps = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
@@ -130,6 +134,8 @@ if __name__ == '__main__':
                                                              prob_region)
                 # for different total loads -- number of total requests
                 for S in SS:
+                    # if I == 3 and L == 2 and top <= 9 and S <= 70:
+                    #     continue
 
                     req = dict()
                     price = dict()
