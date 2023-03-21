@@ -227,7 +227,9 @@ def MTHG(R, R_i, S, B, price, I, resource_types, L, price_m):
                     selected_resource[sigma] = r
 
             # if there is no feasible resource
-            if list(selected_resource)[-1] != sigma:
+            if selected_resource == {}:
+                break
+            elif list(selected_resource)[-1] != sigma:
                 break
 
             # assign this resource
