@@ -114,3 +114,13 @@ def place_lower_bid(B, B_i, i, R_i):
         B_l[i, cur_loc, cur_type] = val
         B_i_l[i][i, cur_loc, cur_type] = val
     return B_l, B_i_l
+
+
+def place_lower_and_higher_wtp(price, cur_req):
+    price_l = deepcopy(price)
+    price_h = deepcopy(price)
+
+    price_l[cur_req] = price[cur_req] / 2
+    price_h[cur_req] = price[cur_req] * 2
+
+    return price_l, price_h

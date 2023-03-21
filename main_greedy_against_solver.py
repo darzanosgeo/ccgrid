@@ -17,13 +17,13 @@ if __name__ == '__main__':
     ##############################
 
     # ######## System Dimensioning Parameters
-    InfP = [5, 10]  # number of Inf Service Providers
+    InfP = [10]  # number of Inf Service Providers
 
-    Loc = [3, 5]  # number of geographic locations
+    Loc = [5]  # number of geographic locations
 
     Loc_prob = 0.3 # region density --- probability for a Provider to appear in a region
 
-    SS = [5, 10, 20, 30, 50, 70, 100]  # total number of service request
+    SS = [10, 20, 40, 70, 100, 140]  # total number of service request
     random_topologies = 10  # number of random topologies
 
     # ##### Resources Characteristics
@@ -116,8 +116,6 @@ if __name__ == '__main__':
     # for all combinations of number of Providers/ number Regions/number of random topologies per combination of number Providers and number of Regions
     for I in InfP:
         for L in Loc:
-            if I == 5 and L == 5:
-                continue
             for top in range(1,random_topologies):
                 # if I == 3 and L == 2 and top <= 8:
                 #     continue

@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
                     # Perform Revenue Sharing
                     FPA_revenues, FPA_prices = FirstPriceAuction(X, total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)
-                    coeff, revenues, revenues_s = VCG_revenue_sharing(X,total_Profit_a, R, R_i, B_i, req[S], B, price[S], I, resource_types, L,price_m)
+                    coeff, revenues, revenues_s = VCG_revenue_sharing(X, R, R_i, B_i, req[S], B, price[S], I, resource_types, L,price_m)
 
                     # select one provider that places a higher and lower bid - select the provider with the highest profits
                     i = np.random.randint(1, I+1)
@@ -182,7 +182,7 @@ if __name__ == '__main__':
                                                                                      resource_types, L, price_m)
                     FPA_revenues_h, FPA_prices_h = FirstPriceAuction(X_h, total_Profit_a, R, R_i, B_i_h, req[S], B_h, price[S], I,
                                                                  resource_types, L, price_m)
-                    coeff_h, revenues_h,  revenues_s_h = VCG_revenue_sharing(X_h, total_Profit_a, R, R_i, B_i_h, req[S], B_h, price[S], I,
+                    coeff_h, revenues_h,  revenues_s_h = VCG_revenue_sharing(X_h, R, R_i, B_i_h, req[S], B_h, price[S], I,
                                                                  resource_types, L, price_m)
 
                     # set lower price
@@ -193,7 +193,7 @@ if __name__ == '__main__':
                     FPA_revenues_l, FPA_prices_l = FirstPriceAuction(X_l, total_Profit_a, R, R_i, B_i_l, req[S], B_l,
                                                                      price[S], I,
                                                                      resource_types, L, price_m)
-                    coeff_l, revenues_l, revenues_s_l = VCG_revenue_sharing(X_l, total_Profit_a, R, R_i, B_i_l, req[S], B_l,
+                    coeff_l, revenues_l, revenues_s_l = VCG_revenue_sharing(X_l, R, R_i, B_i_l, req[S], B_l,
                                                                      price[S], I,
                                                                      resource_types, L, price_m)
 

@@ -5,12 +5,11 @@ from system_model_functions import K, U
 from resource_allocation import resource_allocation
 
 
-
-def VCG_revenue_sharing(X, R, R_i, B_i, req, B, price, I, resource_types, L, price_m):
+def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types, L, price_m):
     # revenues = dict()
     coeff = dict()
-    revenue = dict()
-    revenue_s = dict()
+    revenue_ISP = dict()
+    revenue_VSP = dict()
     # for each Infrastructure Provider
     for i in range(1, I + 1):
         R_no_i = dict()
@@ -40,24 +39,31 @@ def VCG_revenue_sharing(X, R, R_i, B_i, req, B, price, I, resource_types, L, pri
         # estimate the resource allocation if Provider 'i' do not participate in the federation
         X_no_i, tot_prof_no_i, serv_prov_no_i, serv_prov_perc_no_i = resource_allocation(R_no_i, R_i_no_i, req, B_no_i, price, I, resource_types, L, price_m)
 
-        if (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i)) < 0:
-            stop = 0
         # estimate the compensation of provider 'i'
         if (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i)) < 0:
             coeff[i] = K(X, req, R_i[i], B)
         else:
             coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
-        #coeff[i] = (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i)) - (U(X, req, R, price) - K(X, req, R, B)) + (U(X, req, R_i[i], price) - K(X, req, R_i[i], B))
-
-        if coeff[i] < -0.01 or coeff[i] < K(X, req, R_i[i], B):
-            print(coeff[i],K(X, req, R_i[i], B))
-            stop = 1
-        if sum(coeff.values()) > U(X, req, R, price):
-            print(sum(coeff.values()), U(X, req, R, price))
-            stop = 1
 
     for i in range(1, I+1):
-        revenue[i] = coeff[i]
-        revenue_s[i] = coeff[i]
+        revenue_ISP[i] = coeff[i]
 
-    return coeff, revenue, revenue_s
+    coeff = dict()
+    # Estimate the VCG payments of VSPs - remove one request each time
+    for cur_req in req:
+        test = 0
+        temp_req = deepcopy(req)
+        temp_price = deepcopy(price)
+
+        temp_req.pop(cur_req)
+        temp_price.pop(cur_req)
+
+        # estimate the resource allocation if Provider 'i' do not participate in the federation
+        X_no_v, tot_prof_no_v, serv_prov_no_v, serv_prov_perc_no_v = resource_allocation(R, R_i, temp_req, B, temp_price, I, resource_types, L, price_m)
+
+        # estimate the compensation of provider 'i'
+        coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B))/2 - (U(X, req, R, price) - K(X, req, R, B))/2 + price[cur_req]
+
+        revenue_VSP[cur_req] = coeff[cur_req]
+
+    return revenue_ISP, revenue_VSP
