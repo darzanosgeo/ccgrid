@@ -166,25 +166,36 @@ if __name__ == '__main__':
                             payment_VSP_h[cur_req - 1] = 0
 
                     profit_ISP = dict()
+                    profit_ISP_h = dict()
+                    profit_ISP_l = dict()
                     profit_VSP = dict()
                     profit_VSP_l = dict()
                     profit_VSP_h = dict()
 
                     for ii in range(1, I+1):
                         profit_ISP[ii] = payment_ISP[ii] - K(X, req[S], R_i[ii], B)
+                        profit_ISP_h[ii] = payment_ISP_h[ii] - K(X, req[S], R_i[ii], B)
+                        profit_ISP_l[ii] = payment_ISP_l[ii] - K(X, req[S], R_i[ii], B)
 
                     for cur_req in req[S]:
                         profit_VSP[cur_req] = price[S][cur_req] - payment_VSP[cur_req]
                         profit_VSP_l[cur_req] = price[S][cur_req] - payment_VSP_l[cur_req]
                         profit_VSP_h[cur_req] = price[S][cur_req] - payment_VSP_h[cur_req]
 
-                    print(i)
-                    print(profit_ISP)
-                    print(profit_VSP)
-                    print(profit_VSP_h)
-                    print(profit_VSP_l)
 
-                    print(sum(payment_VSP.values())-sum(payment_ISP.values()))
+                    print("normal", profit_ISP)
+                    print("high", profit_ISP_h)
+                    print("low", profit_ISP_l)
+
+                    print("")
+                    print(i)
+                    print("normal", profit_VSP)
+                    print("high", profit_VSP_h)
+                    print("low", profit_VSP_l)
+                    print("")
+                    print("normal", sum(payment_VSP.values())-sum(payment_ISP.values()))
+                    print("high", sum(payment_VSP_h.values()) - sum(payment_ISP_h.values()))
+                    print("low", sum(payment_VSP_l.values()) - sum(payment_ISP_l.values()))
 
                     test = 0
 

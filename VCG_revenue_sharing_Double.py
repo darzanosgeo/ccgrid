@@ -8,8 +8,8 @@ from resource_allocation import resource_allocation
 def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types, L, price_m):
     # revenues = dict()
     coeff = dict()
-    revenue_ISP = dict()
-    revenue_VSP = dict()
+    payment_ISP = dict()
+    payment_VSP = dict()
     # for each Infrastructure Provider
     for i in range(1, I + 1):
         R_no_i = dict()
@@ -46,9 +46,11 @@ def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types,
             coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
 
     for i in range(1, I+1):
-        revenue_ISP[i] = coeff[i]
+        payment_ISP[i] = coeff[i]
 
     coeff = dict()
+    min_dif = -1
+    max_coef = 1
     # Estimate the VCG payments of VSPs - remove one request each time
     for cur_req in req:
         test = 0
@@ -62,8 +64,18 @@ def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types,
         X_no_v, tot_prof_no_v, serv_prov_no_v, serv_prov_perc_no_v = resource_allocation(R, R_i, temp_req, B, temp_price, I, resource_types, L, price_m)
 
         # estimate the compensation of provider 'i'
-        coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B))/2 - (U(X, req, R, price) - K(X, req, R, B))/2 + price[cur_req]
+        test = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, req, R, price) - K(X, req, R, B)) + price[cur_req]
 
-        revenue_VSP[cur_req] = coeff[cur_req]
+        coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, temp_req, R, temp_price) - K(X, temp_req, R, B)) + K(X, {cur_req:req[cur_req]}, R, B)
 
-    return revenue_ISP, revenue_VSP
+        if coeff[cur_req] - test > 0.001 or coeff[cur_req] - test < -0.001:
+            test = 0
+        payment_VSP[cur_req] = coeff[cur_req]
+        # if price[cur_req] - coeff[cur_req] < min_dif or min_dif == -1:
+        #     min_dif = price[cur_req] - coeff[cur_req]
+        #     max_coef = price[cur_req]/coeff[cur_req]
+
+    # for cur_req in req:
+    #     payment_VSP[cur_req] = max_coef * coeff[cur_req]
+
+    return payment_ISP, payment_VSP
