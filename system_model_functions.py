@@ -26,3 +26,8 @@ def z(r, t, l):
         return 0
 
 
+def zz(r, i):
+    if r[0] == i:
+        return 1
+    else:
+        return 0

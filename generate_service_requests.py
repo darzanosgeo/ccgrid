@@ -14,7 +14,7 @@ def generate_service_requests(S, L, Load_Core, Load_Edge, price_s, prob_region):
         #################################
         # Determine the service regions
         # randomly select one region from L
-        locs = [random.randint(1, L)]
+        locs = random.sample(range(1,L+1),2)
 
         # add more locations with a probability
         for l in range(1, L):
