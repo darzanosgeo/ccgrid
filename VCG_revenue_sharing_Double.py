@@ -44,6 +44,7 @@ def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types,
             coeff[i] = K(X, req, R_i[i], B)
         else:
             coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
+           #coeff[i] = K(X, req, R_i[i], B) + (U(X, req, R, price) - K(X, req, R, B)) - (U(X_no_i, req, R_no_i, price) - K(X_no_i, req, R_no_i, B_no_i))
 
     for i in range(1, I+1):
         payment_ISP[i] = coeff[i]
@@ -64,18 +65,20 @@ def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types,
         X_no_v, tot_prof_no_v, serv_prov_no_v, serv_prov_perc_no_v = resource_allocation(R, R_i, temp_req, B, temp_price, I, resource_types, L, price_m)
 
         # estimate the compensation of provider 'i'
-        test = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, req, R, price) - K(X, req, R, B)) + price[cur_req]
+        #coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, req, R, price) - K(X, req, R, B)) + price[cur_req]
+
 
         coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, temp_req, R, temp_price) - K(X, temp_req, R, B)) + K(X, {cur_req:req[cur_req]}, R, B)
 
-        if coeff[cur_req] - test > 0.001 or coeff[cur_req] - test < -0.001:
-            test = 0
         payment_VSP[cur_req] = coeff[cur_req]
-        # if price[cur_req] - coeff[cur_req] < min_dif or min_dif == -1:
-        #     min_dif = price[cur_req] - coeff[cur_req]
-        #     max_coef = price[cur_req]/coeff[cur_req]
-
+        # if coeff[cur_req] - test > 0.001 or coeff[cur_req] - test < -0.001:
+        #     test = 0
+    #
+    #     if price[cur_req] - coeff[cur_req] < min_dif or min_dif == -1:
+    #          min_dif = price[cur_req] - coeff[cur_req]
+    #          max_coef = price[cur_req]/coeff[cur_req]
+    #
     # for cur_req in req:
-    #     payment_VSP[cur_req] = max_coef * coeff[cur_req]
+    #      payment_VSP[cur_req] = max_coef * coeff[cur_req]
 
     return payment_ISP, payment_VSP
