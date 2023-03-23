@@ -60,7 +60,7 @@ while line != '':
 I = [3, 5, 10]
 T = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 L = [2, 3, 5]
-R = [5, 10, 20, 30, 50, 70, 90]
+R = [5, 10, 20, 30, 40, 50, 70, 100, 140]
 
 for i in I:
     for l in L:
@@ -94,6 +94,8 @@ for i in I:
                 tot_prof_hr.append(temp_tot_prof_hr / counter)
                 serv_perc_hr.append(temp_serv_perc_hr / counter)
 
+        if tot_prof == []:
+            continue
 
         plt.rcParams.update({'font.size': 14})
         plt.rcParams.update({'axes.labelsize': 14})
