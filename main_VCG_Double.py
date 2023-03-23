@@ -1,6 +1,6 @@
 from create_topology import create_topology
 from generate_service_requests import generate_service_requests
-from bidding import bidding, place_lower_and_higher_wtp
+from bidding import bidding, place_lower_and_higher_wtp, B_f
 from resource_allocation import resource_allocation
 from VCG_revenue_sharing_Double import VCG_revenue_sharing_Double
 from system_model_functions import U, K
@@ -16,19 +16,20 @@ if __name__ == '__main__':
     # ######## System Dimensioning Parameters
     InfP = [3]  # number of Inf Service Providers
 
-    Loc = [2]  # number of geographic locations
+    Loc = [3]  # number of geographic locations
 
     Loc_prob = 0.35  # region density --- probability for a Provider to appear in a region
 
-    SS = [2, 5, 7, 10, 20, 30, 50, 70, 100]  # total number of service request
+    SS = [5, 10, 20, 30, 50, 70, 100]  # total number of service request
 
     random_topologies = 10  # number of random topologies
 
     # ##### Resources Characteristics
     # Resource types based on our example
     # IoT Core, Kinesis Firehose, Kinesis Data Analytics, S3, EMR, QuickSight
-    resource_types = {'IoT', 'Firehose', 'Analytics', 'S3', 'EMR','Quick'}
-    ResProf_prob = 0.35 # large profit with probability
+    # resource_types = {'IoT', 'Firehose', 'Analytics', 'S3', 'EMR','Quick'}
+    resource_types = {'IoT', 'Firehose', 'EMR'}
+    ResProf_prob = 0.2  # large profit with probability
 
     # Resource Capacities are assigned based on a normal distribution
     resource_profile_small = dict()
@@ -42,22 +43,22 @@ if __name__ == '__main__':
             # maximum number of TBs that can be streamed into Firehose resources
             resource_profile_small[r_type] = 200
             resource_profile_large[r_type] = 1000
-        elif r_type == 'Analytics':
-            # number of Data Analytics processing units available by each Provider in each region
-            resource_profile_small[r_type] = 100
-            resource_profile_large[r_type] = 500
-        elif r_type == 'S3':
-            # maximum number of TBs can be stored by each Provider in each region
-            resource_profile_small[r_type] = 500
-            resource_profile_large[r_type] = 2500
+        # elif r_type == 'Analytics':
+        #     # number of Data Analytics processing units available by each Provider in each region
+        #     resource_profile_small[r_type] = 100
+        #     resource_profile_large[r_type] = 500
+        # elif r_type == 'S3':
+        #     # maximum number of TBs can be stored by each Provider in each region
+        #     resource_profile_small[r_type] = 500
+        #     resource_profile_large[r_type] = 2500
         elif r_type == 'EMR':
             # number of vCPUs maintained by a single providers in a single location
             resource_profile_small[r_type] = 1000
             resource_profile_large[r_type] = 5000
-        elif r_type == 'Quick':
-            # number of Qyicksight instances can be supported by a single providers in a single location
-            resource_profile_small[r_type] = 10**6  # THIS IN FACT MEANS NO LIMITATION
-            resource_profile_large[r_type] = 10**6
+        # elif r_type == 'Quick':
+        #     # number of Qyicksight instances can be supported by a single providers in a single location
+        #     resource_profile_small[r_type] = 10**6  # THIS IN FACT MEANS NO LIMITATION
+        #     resource_profile_large[r_type] = 10**6
 
     # Cost per unit of resource based on AWS prices
     # We assume that these are the cost values based on which the Providers determine their bids
@@ -65,10 +66,10 @@ if __name__ == '__main__':
 
     cost['IoT'] = 0.096/(10**6)  # cost per minutes of connection
     cost['Firehose'] = 0.034  # cost per GB
-    cost['Analytics'] = 0.127  # cost per hour per processing unit
-    cost['S3'] = 0.024  # cost per GB of data stored
+    #ost['Analytics'] = 0.127  # cost per hour per processing unit
+    #cost['S3'] = 0.024  # cost per GB of data stored
     cost['EMR'] = 0.06  # cost per vCPU per hour
-    cost['Quick'] = 34/30  # cost per day
+    #cost['Quick'] = 34/30  # cost per day
 
     # Providers follow
     bid_markup = 1  # %100 - double the cost
@@ -80,17 +81,24 @@ if __name__ == '__main__':
     # 1. AWS IoT Core --> number of connected devices (all day)
     # 2. AWS Kinesis Firehose --> TBs per day streamed into the component
     # 3. AWS Kinesis Data Analytics --> Processing units always active per day
-    Load_Edge[1] = {'IoT': 1000, 'Firehose': 10, 'Analytics': 10}
+    # Load_Edge[1] = {'IoT': 1000, 'Firehose': 10, 'Analytics': 10}
+    Load_Edge[1] = {'IoT': 1000, 'Firehose': 10}
 
     # 1. AWS S3 --> TBs/month stored to the core cloud
     # 2. AWS EMR (Serverless)) --> average number of vCPUs/hour utilized per day
     # 3. AWS QuickSight --> Monthly fee for a load of Questions and Sessions
-    Load_Core[1] = {'S3': 50, 'EMR': 100, 'Quick': 1}
+    # Load_Core[1] = {'S3': 50, 'EMR': 100, 'Quick': 1}
+    Load_Core[1] = {'EMR': 100}
     # Load_Core[1] = [100, 200, 1]
     # Load_Core[1] = [200, 400, 1]
 
     # service price base
     price_s_base = 1500  # $/hour
+    # price_s_base = 0
+    # for load in Load_Edge[1]:
+    #     price_s_base += B_f(load, cost, bid_markup).subs('l', Load_Edge[1][load]) * 3.5
+    # for load in Load_Core[1]:
+    #     price_s_base += B_f(load, cost, bid_markup).subs('l', Load_Core[1][load]) * 1.5
 
     # probability of addition service region
     prob_region = 0.2
@@ -166,25 +174,44 @@ if __name__ == '__main__':
                             payment_VSP_h[cur_req - 1] = 0
 
                     profit_ISP = dict()
+                    profit_ISP_h = dict()
+                    profit_ISP_l = dict()
                     profit_VSP = dict()
                     profit_VSP_l = dict()
                     profit_VSP_h = dict()
 
                     for ii in range(1, I+1):
                         profit_ISP[ii] = payment_ISP[ii] - K(X, req[S], R_i[ii], B)
+                        profit_ISP_h[ii] = payment_ISP_h[ii] - K(X, req[S], R_i[ii], B)
+                        profit_ISP_l[ii] = payment_ISP_l[ii] - K(X, req[S], R_i[ii], B)
 
                     for cur_req in req[S]:
-                        profit_VSP[cur_req] = price[S][cur_req] - payment_VSP[cur_req]
-                        profit_VSP_l[cur_req] = price[S][cur_req] - payment_VSP_l[cur_req]
-                        profit_VSP_h[cur_req] = price[S][cur_req] - payment_VSP_h[cur_req]
+                        if payment_VSP[cur_req] != 0:
+                            profit_VSP[cur_req] = price[S][cur_req] - payment_VSP[cur_req]
+                        else:
+                            profit_VSP[cur_req] = 0
+                        if payment_VSP_l[cur_req] != 0:
+                            profit_VSP_l[cur_req] = price[S][cur_req] - payment_VSP_l[cur_req]
+                        else:
+                            profit_VSP_l[cur_req] = 0
+                        if payment_VSP_h[cur_req] != 0:
+                            profit_VSP_h[cur_req] = price[S][cur_req] - payment_VSP_h[cur_req]
+                        else:
+                            profit_VSP_h[cur_req] = 0
 
+                    print("normal", profit_ISP)
+                    print("high", profit_ISP_h)
+                    print("low", profit_ISP_l)
+
+                    print("")
                     print(i)
-                    print(profit_ISP)
-                    print(profit_VSP)
-                    print(profit_VSP_h)
-                    print(profit_VSP_l)
-
-                    print(sum(payment_VSP.values())-sum(payment_ISP.values()))
+                    print("normal", profit_VSP)
+                    print("high", profit_VSP_h)
+                    print("low", profit_VSP_l)
+                    print("")
+                    print("normal", sum(payment_VSP.values()) - sum(payment_ISP.values()))
+                    print("high", sum(payment_VSP_h.values()) - sum(payment_ISP_h.values()))
+                    print("low", sum(payment_VSP_l.values()) - sum(payment_ISP_l.values()))
 
                     test = 0
 
