@@ -128,7 +128,7 @@ for i in I:
         plt.ylabel('Total profit ($/h)')
 
         # giving a title to my graph
-        plt.title('Total Profit, ' + str(i) + ' Providers, ' + str(l) + ' Locations')
+        # plt.title('Total Profit, ' + str(i) + ' Providers, ' + str(l) + ' Locations')
         plt.legend(['Optimal allocation',  'Greedy algorithm'])
         plt.savefig('Total Profit, ' + str(i) + ' Providers, ' + str(l) + ' Locations', dpi=300, bbox_inches='tight')
         plt.show()

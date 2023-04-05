@@ -15,10 +15,11 @@ def generate_service_requests(S, L, Load_Core, Load_Edge, price_s, prob_region):
         # Determine the service regions
         # randomly select one region from L
         locs = random.sample(range(1,L+1),2)
+        #locs = random.sample(range(1, L + 1), 1)
 
         # add more locations with a probability
         for l in range(1, L):
-            if random.random() < prob_region and locs[0] != l:
+            if random.random() < prob_region and l not in locs:
                 locs.append(l)
 
 

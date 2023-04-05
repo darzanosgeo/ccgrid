@@ -5,7 +5,7 @@ from system_model_functions import K, U
 from resource_allocation import resource_allocation
 
 
-def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types, L, price_m):
+def VCG_revenue_sharing_Double(X, serv_prov, R, R_i, B_i, req, B, price, I, resource_types, L, price_m):
     # revenues = dict()
     coeff = dict()
     payment_ISP = dict()
@@ -65,20 +65,36 @@ def VCG_revenue_sharing_Double(X, R, R_i, B_i, req, B, price, I, resource_types,
         X_no_v, tot_prof_no_v, serv_prov_no_v, serv_prov_perc_no_v = resource_allocation(R, R_i, temp_req, B, temp_price, I, resource_types, L, price_m)
 
         # estimate the compensation of provider 'i'
-        #coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, req, R, price) - K(X, req, R, B)) + price[cur_req]
+        # coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, req, R, price) - K(X, req, R, B)) + price[cur_req]
+        # coeff[cur_req] = 2 * K(X, {cur_req:req[cur_req]}, R, B) - (U(X, req, R, price) + K(X, req, R, B)) + (U(X_no_v, temp_req, R, temp_price) + K(X_no_v, temp_req, R, B))
+        coeff[cur_req] = price[cur_req] - (U(X, req, R, price) - U(X_no_v, temp_req, R, temp_price)) + (K(X, req, R, B) - K(X_no_v, temp_req, R, B))
+        # coeff[cur_req] = (K(X, temp_req, R, B) - K(X_no_v, temp_req, R, B))
 
-
-        coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, temp_req, R, temp_price) - K(X, temp_req, R, B)) + K(X, {cur_req:req[cur_req]}, R, B)
+        #coeff[cur_req] = (U(X_no_v, temp_req, R, temp_price) - K(X_no_v, temp_req, R, B)) - (U(X, temp_req, R, temp_price) - K(X, temp_req, R, B)) + K(X, {cur_req:req[cur_req]}, R, B)
 
         payment_VSP[cur_req] = coeff[cur_req]
         # if coeff[cur_req] - test > 0.001 or coeff[cur_req] - test < -0.001:
         #     test = 0
-    #
-    #     if price[cur_req] - coeff[cur_req] < min_dif or min_dif == -1:
-    #          min_dif = price[cur_req] - coeff[cur_req]
-    #          max_coef = price[cur_req]/coeff[cur_req]
-    #
-    # for cur_req in req:
-    #      payment_VSP[cur_req] = max_coef * coeff[cur_req]
+
+        if price[cur_req] - coeff[cur_req] < min_dif or min_dif == -1:
+              min_dif = price[cur_req] - coeff[cur_req]
+              max_coef = price[cur_req]/coeff[cur_req]
+
+
+    for cur_req in req:
+        # payment_VSP[cur_req] = (max_coef - 0.1) * coeff[cur_req]/sum(coeff.values())
+        payment_VSP[cur_req] = max_coef * (1 - coeff[cur_req] / sum(coeff.values())) * coeff[cur_req]
+        #payment_VSP[cur_req] =price[cur_req] - (1 - coeff[cur_req] / sum(coeff.values())) * (price[cur_req] - coeff[cur_req])
+        if payment_VSP[cur_req] < 0:
+            test = 0
+
+    min_price = 0
+    for cur_req in range(len(serv_prov)):
+        if serv_prov[cur_req] == 1:
+            if min_price == 0 or min_price > price[cur_req+1]:
+                min_price = price[cur_req+1]
+
+    for cur_req in req:
+        payment_VSP[cur_req] = min_price
 
     return payment_ISP, payment_VSP

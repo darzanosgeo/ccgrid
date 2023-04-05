@@ -143,7 +143,7 @@ if __name__ == '__main__':
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
-                    payment_ISP, payment_VSP = VCG_revenue_sharing_Double(X, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)
+                    payment_ISP, payment_VSP = VCG_revenue_sharing_Double(X, serv_prov, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)
                     for cur_req in req[S]:
                         if serv_prov[cur_req-1] == 0:
                             payment_VSP[cur_req-1] = 0
@@ -159,7 +159,7 @@ if __name__ == '__main__':
                     X_l, total_Profit_l, serv_pro_l, serv_Prov_perc_l = resource_allocation(R, R_i, req[S], B, price_l, I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
-                    payment_ISP_l, payment_VSP_l = VCG_revenue_sharing_Double(X_l, R, R_i, B_i, req[S], B, price_l, I, resource_types, L, price_m)
+                    payment_ISP_l, payment_VSP_l = VCG_revenue_sharing_Double(X_l, serv_pro_l, R, R_i, B_i, req[S], B, price_l, I, resource_types, L, price_m)
                     for cur_req in req[S]:
                         if serv_pro_l[cur_req - 1] == 0:
                             payment_VSP_l[cur_req - 1] = 0
@@ -168,7 +168,7 @@ if __name__ == '__main__':
                     X_h, total_Profit_h, serv_pro_h, serv_Prov_perc_h = resource_allocation(R, R_i, req[S], B, price_h, I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
-                    payment_ISP_h, payment_VSP_h = VCG_revenue_sharing_Double(X_h, R, R_i, B_i, req[S], B, price_h, I, resource_types, L, price_m)
+                    payment_ISP_h, payment_VSP_h = VCG_revenue_sharing_Double(X_h, serv_pro_h, R, R_i, B_i, req[S], B, price_h, I, resource_types, L, price_m)
                     for cur_req in req[S]:
                         if serv_pro_h[cur_req - 1] == 0:
                             payment_VSP_h[cur_req - 1] = 0
@@ -190,10 +190,12 @@ if __name__ == '__main__':
                             profit_VSP[cur_req] = price[S][cur_req] - payment_VSP[cur_req]
                         else:
                             profit_VSP[cur_req] = 0
+
                         if payment_VSP_l[cur_req] != 0:
                             profit_VSP_l[cur_req] = price[S][cur_req] - payment_VSP_l[cur_req]
                         else:
                             profit_VSP_l[cur_req] = 0
+
                         if payment_VSP_h[cur_req] != 0:
                             profit_VSP_h[cur_req] = price[S][cur_req] - payment_VSP_h[cur_req]
                         else:
