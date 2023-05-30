@@ -174,7 +174,10 @@ if __name__ == '__main__':
 
                     for ii in range(1, I + 1):
                         #new_profit[ii] = profit[ii] + surplus / I
-                        if profit[ii] < profit_aa[ii] and surplus >= profit_aa[ii] - profit[ii]:
+                        if surplus <= 0:
+                            new_profit[ii] = profit[ii]
+                            final_payments[ii] = payments[ii]
+                        elif profit[ii] < profit_aa[ii] and surplus >= profit_aa[ii] - profit[ii]:
                             new_profit[ii] = profit_aa[ii]
                             surplus = surplus - (profit_aa[ii] - profit[ii])
                             final_payments[ii] = payments[ii] + (profit_aa[ii] - profit[ii])
@@ -225,6 +228,7 @@ if __name__ == '__main__':
                     file.write("Topology = " + repr(top) + "\n")
                     file.write("Locations = " + repr(L) + "\n")
                     file.write("Requests = " + repr(S) + "\n")
+                    file.write("Utilization = " + repr(serv_Prov_perc) + "\n")
                     file.write("VCG_payments = " + repr(print(list(payments.values()))) + "\n")
                     file.write("Total_Profit = " + repr(sum(profit.values())) + "\n")
                     file.write("Total_Profit_h = " + repr(sum(profit_h.values())) + "\n")
