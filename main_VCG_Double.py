@@ -215,7 +215,6 @@ if __name__ == '__main__':
                     print("high", sum(payment_VSP_h.values()) - sum(payment_ISP_h.values()))
                     print("low", sum(payment_VSP_l.values()) - sum(payment_ISP_l.values()))
 
-
                     test = 0
 
 

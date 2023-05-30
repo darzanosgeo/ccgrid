@@ -22,16 +22,16 @@ if __name__ == '__main__':
 
     Loc = [5]  # number of geographic locations
 
-    Loc_prob = 0.35  # region density --- probability for a Provider to appear in a region
+    Loc_prob = 0.2  # region density --- probability for a Provider to appear in a region
 
-    SS = [5, 10, 20, 30, 50, 70, 100]  # total number of service request
+    SS = [10, 20, 30, 50, 70, 100, 130]  # total number of service request
 
     random_topologies = 5  # number of random topologies
 
     # ##### Resources Characteristics
     # Resource types based on our example
     # IoT Core, Kinesis Firehose, Kinesis Data Analytics, S3, EMR, QuickSight
-
+    #resource_types = {'IoT', 'Firehose', 'Analytics', 'S3', 'EMR', 'Quick'}
     resource_types = {'IoT', 'Firehose', 'EMR'}
     ResProf_prob = 0.35  # large profit with probability
 
@@ -47,10 +47,22 @@ if __name__ == '__main__':
             # maximum number of TBs that can be streamed into Firehose resources
             resource_profile_small[r_type] = 200
             resource_profile_large[r_type] = 1000
+        # elif r_type == 'Analytics':
+        #     # number of Data Analytics processing units available by each Provider in each region
+        #     resource_profile_small[r_type] = 100
+        #     resource_profile_large[r_type] = 500
+        # elif r_type == 'S3':
+        #     # maximum number of TBs can be stored by each Provider in each region
+        #     resource_profile_small[r_type] = 500
+        #     resource_profile_large[r_type] = 2500
         elif r_type == 'EMR':
             # number of vCPUs maintained by a single providers in a single location
             resource_profile_small[r_type] = 1000
             resource_profile_large[r_type] = 5000
+        # elif r_type == 'Quick':
+        #     # number of Qyicksight instances can be supported by a single providers in a single location
+        #     resource_profile_small[r_type] = 10 ** 6  # THIS IN FACT MEANS NO LIMITATION
+        #     resource_profile_large[r_type] = 10 ** 6
 
     # Cost per unit of resource based on AWS prices
     # We assume that these are the cost values based on which the Providers determine their bids
@@ -58,7 +70,10 @@ if __name__ == '__main__':
 
     cost['IoT'] = 0.096 / (10 ** 6)  # cost per minutes of connection
     cost['Firehose'] = 0.034  # cost per GB
+    # cost['Analytics'] = 0.127  # cost per hour per processing unit
+    # cost['S3'] = 0.024  # cost per GB of data stored
     cost['EMR'] = 0.06  # cost per vCPU per hour
+    # cost['Quick'] = 34 / 30  # cost per day
 
     # Providers follow
     bid_markup = 1  # %100 - double the cost
@@ -70,6 +85,7 @@ if __name__ == '__main__':
     # 1. AWS IoT Core --> number of connected devices (all day)
     # 2. AWS Kinesis Firehose --> TBs per day streamed into the component
     # 3. AWS Kinesis Data Analytics --> Processing units always active per day
+    # Load_Edge[1] = {'IoT': 1000, 'Firehose': 10, 'Analytics': 10}
     Load_Edge[1] = {'IoT': 1000, 'Firehose': 10}
 
     # 1. AWS S3 --> TBs/month stored to the core cloud
@@ -120,8 +136,20 @@ if __name__ == '__main__':
                             req[S].pop(s)
                             price[S].pop(s)
 
+                    ################
+                    # Resource allocation if each Cloud Provider Operated alone
+                    # X_a = {}
+                    # total_Profit_a = {}
+                    # serv_prov_a = {}
+                    # serv_Prov_perc_a = {}
+                    # for i in range(1, I+1):
+                    #     #set to zero capacity the resources of all other providers
+                    #     R_a = {key: 0 for key in R}
+                    #     for _ in R_i[i]:
+                    #         R_a[_] = R_i[i][_]
+                    #
+                    #     X_a[i], total_Profit_a[i], serv_prov_a[i], serv_Prov_perc_a[i] = resource_allocation(R_a, R_i, req[S], B, price[S], I, resource_types, L, 0)
 
-                    # Each service can be only served by one and only InfSP or none
                     X_a, total_Profit_a, serv_prov_a, serv_Prov_perc_a = resource_allocationSA(R, R_i, req[S], B, price[S], I, resource_types, L, 0)
 
                     ##############
@@ -129,7 +157,7 @@ if __name__ == '__main__':
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
-                    payments = VCG_revenue_sharing(X, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)
+                    revenues = VCG_revenue_sharing(X, R, R_i, B_i, req[S], B, price[S], I, resource_types, L,price_m)
 
                     # select one provider that places a higher and lower bid - select the provider with the highest profits
                     i = np.random.randint(1, I+1)
@@ -139,7 +167,7 @@ if __name__ == '__main__':
                     X_h, total_Profit_h, serv_prov_h, serv_Prov_perc_h = resource_allocation(R, R_i, req[S], B_h, price[S], I,
                                                                                      resource_types, L, price_m)
 
-                    payments_h = VCG_revenue_sharing(X_h, R, R_i, B_i_h, req[S], B_h, price[S], I, resource_types, L, price_m)
+                    revenues_h = VCG_revenue_sharing(X_h, R, R_i, B_i_h, req[S], B_h, price[S], I, resource_types, L, price_m)
 
                     # set lower price
                     B_l, B_i_l = place_lower_bid(B, B_i, i, R_i)
@@ -147,93 +175,63 @@ if __name__ == '__main__':
                                                                                              price[S], I,
                                                                                              resource_types, L, price_m)
 
-                    payments_l = VCG_revenue_sharing(X_l, R, R_i, B_i_l, req[S], B_l,
+                    revenues_l = VCG_revenue_sharing(X_l, R, R_i, B_i_l, req[S], B_l,
                                                                      price[S], I, resource_types, L, price_m)
 
 
                     profit = dict()
                     profit_h = dict()
                     profit_l = dict()
-                    profit_aa = dict()
-                    final_payments = dict()
+                    total_Profit_aa = dict()
 
                     for ii in range(1, I+1):
-                        profit[ii] = payments[ii] - K(X, req[S], R_i[ii], B)
-                        profit_h[ii] = payments_h[ii] - K(X_h, req[S], R_i[ii], B)
-                        profit_l[ii] = payments_l[ii] - K(X_l, req[S], R_i[ii], B)
-                        profit_aa[ii] = U(X_a, req[S], R_i[ii], price[S]) - K(X_a, req[S], R_i[ii], B)
+                        profit[ii] = revenues[ii] - K(X, req[S], R_i[ii], B)
+                        profit_h[ii] = revenues_h[ii] - K(X_h, req[S], R_i[ii], B)
+                        profit_l[ii] = revenues_l[ii] - K(X_l, req[S], R_i[ii], B)
+                        total_Profit_aa[ii] = U(X_a, req[S], R_i[ii], price[S]) - K(X_a, req[S], R_i[ii], B)
 
-                    surplus = sum(price[S].values()) - sum(payments.values())
-                    initial_surplus = surplus
-                    # surplus_h = sum(revenues_h.values()) - sum(profit.values())
-                    # surplus_l = sum(revenues_l.values()) - sum(profit.values())
+                    surplus = U(X, req[S], R, price[S]) - K(X, req[S], R, B) - sum(profit.values())
 
                     new_profit = dict()
                     new_profit_l = dict()
                     new_profit_h = dict()
 
                     for ii in range(1, I + 1):
-                        #new_profit[ii] = profit[ii] + surplus / I
-                        if profit[ii] < profit_aa[ii] and surplus >= profit_aa[ii] - profit[ii]:
-                            new_profit[ii] = profit_aa[ii]
-                            surplus = surplus - (profit_aa[ii] - profit[ii])
-                            final_payments[ii] = payments[ii] + (profit_aa[ii] - profit[ii])
-                        elif profit[ii] < profit_aa[ii] and surplus < profit_aa[ii] - profit[ii]:
-                            new_profit[ii] = profit[ii] + surplus
-                            final_payments[ii] = payments[ii] + surplus
-                            surplus = 0
-                        else:
-                            new_profit[ii] = profit[ii]
-                            final_payments[ii] = payments[ii]
-
-                    if surplus > 0:
-                        for ii in range(1, I + 1):
-                            final_payments[ii] = final_payments[ii] + surplus/I
-                            new_profit[ii] = new_profit[ii] + surplus/I
-                            #new_profit[ii] = new_profit[ii] + (profit[ii]/sum(profit.values())) * surplus
-                        # new_profit_l[ii] = profit_l[ii] + (profit_aa[ii] / sum(profit_aa.values())) * surplus_l
-                        # new_profit_h[ii] = profit_h[ii] + (profit_aa[ii] / sum(profit_aa.values())) * surplus_h
-                        #new_profit_l[ii] = profit_l[ii] + surplus_l / I
-                        #new_profit_h[ii] = profit_h[ii] + surplus_h / I
+                        new_profit[ii] = profit[ii] + surplus / I
+                        new_profit_l[ii] = profit_l[ii] + surplus / I
+                        new_profit_h[ii] = profit_h[ii] + surplus / I
 
                     print(i)
-                    print("Profit", profit)
-                    print("Profit_h", profit_h)
-                    print("Profit_l", profit_l)
-                    print("Total Profits", sum(profit.values()))
-                    print("Total Profits h", sum(profit_h.values()))
-                    print("Total Profits l", sum(profit_l.values()))
-                    print("Total VSP payments", sum(price[S].values()))
-                    print("Total VCG payments", sum(payments.values()))
-                    print("Surplus", initial_surplus)
-
+                    print(profit)
+                    print(profit_h)
+                    print(profit_l)
+                    print(sum(profit.values()))
+                    print(sum(profit_h.values()))
+                    print(sum(profit_l.values()))
+                    print(total_Profit)
+                    print(surplus)
                     print("")
-                    print("Final payments", final_payments)
-                    print("New Profits", new_profit)
-                    # print(new_profit_h)
-                    # print(new_profit_l)
-                    print("New Total Profits", sum(new_profit.values()))
-                    # print(sum(new_profit_h.values()))
-                    # print(sum(new_profit_l.values()))
+                    print(new_profit)
+                    print(new_profit_h)
+                    print(new_profit_l)
+                    print(sum(new_profit.values()))
+                    print(sum(new_profit_h.values()))
+                    print(sum(new_profit_l.values()))
 
-                    print("Standalone Profits", profit_aa)
-                    print("Standalone Total Profits", sum(profit_aa.values()))
+                    print(total_Profit_aa)
+                    print(sum(total_Profit_aa.values()))
 
-                    file = open("results_NEW_VCG.txt", "a")
+                    file = open("results_VCG.txt", "a")
                     file.write("\n" + "--- New experiment --" + "\n")
                     file.write("Providers = " + repr(I) + "\n")
                     file.write("Topology = " + repr(top) + "\n")
                     file.write("Locations = " + repr(L) + "\n")
                     file.write("Requests = " + repr(S) + "\n")
-                    file.write("VCG_payments = " + repr(print(list(payments.values()))) + "\n")
                     file.write("Total_Profit = " + repr(sum(profit.values())) + "\n")
-                    file.write("Total_Profit_h = " + repr(sum(profit_h.values())) + "\n")
-                    file.write("Total_Profit_l = " + repr(sum(profit_l.values())) + "\n")
-                    file.write("Surplus= " + repr(initial_surplus) + "\n")
-                    file.write("Final_InfSP_payments = " + repr(print(list(final_payments.values()))) + "\n")
-                    file.write("Individual_Profits_after_surplus_distribution = " + repr(list(new_profit.values())) + "\n")
-                    file.write("Individual_Profits_StandAlone= " + repr(list(profit_aa.values())) + "\n")
-
+                    file.write("Total_Profit_l = " + repr(sum(profit_h.values())) + "\n")
+                    file.write("Greedy_util_h = " + repr(sum(profit_l.values())) + "\n")
+                    file.write("Individual_Profits= " + repr(list(new_profit.values())) + "\n")
+                    file.write("Individual_Profits_SA= " + repr(list(total_Profit_aa.values())) + "\n")
                     file.write("\n")
                     file.close()
 
