@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     SS = [5, 10, 20, 30, 50, 70, 100]  # total number of service request
 
-    random_topologies = 5  # number of random topologies
+    random_topologies = 10  # number of random topologies
 
     # ##### Resources Characteristics
     # Resource types based on our example
@@ -95,6 +95,8 @@ if __name__ == '__main__':
     for I in InfP:
         for L in Loc:
             for top in range(1,random_topologies):
+                if top <=2:
+                    continue
                 # create topology
                 R, R_i, max_Caps = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
