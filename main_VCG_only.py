@@ -95,8 +95,6 @@ if __name__ == '__main__':
     for I in InfP:
         for L in Loc:
             for top in range(1,random_topologies):
-                if top <= 6:
-                    continue
 
                 # create topology
                 R, R_i, max_Caps = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
