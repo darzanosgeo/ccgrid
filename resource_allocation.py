@@ -83,7 +83,7 @@ def resource_allocation(R, R_i, S, B, price, I, resource_types, L,price_m):
 
     ########################
     # RUN OPTIMIZATION
-    # m.setParam(GRB.Param.TimeLimit, 300.0)
+    m.setParam(GRB.Param.TimeLimit, 1000.0)
     m.optimize()
 
     # CHECK IF NOT FEASIBLE SOLUTION FOUND

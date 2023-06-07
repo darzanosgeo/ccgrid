@@ -95,8 +95,9 @@ if __name__ == '__main__':
     for I in InfP:
         for L in Loc:
             for top in range(1,random_topologies):
-                if top <=2:
+                if top <= 6:
                     continue
+
                 # create topology
                 R, R_i, max_Caps = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
@@ -110,6 +111,8 @@ if __name__ == '__main__':
 
                 # for different total loads -- number of total requests
                 for S in SS:
+
+
                     req = dict()
                     price = dict()
 
@@ -121,7 +124,6 @@ if __name__ == '__main__':
                         if s > S:
                             req[S].pop(s)
                             price[S].pop(s)
-
 
                     # Each service can be only served by one and only InfSP or none
                     X_a, total_Profit_a, serv_prov_a, serv_Prov_perc_a = resource_allocationSA(R, R_i, req[S], B, price[S], I, resource_types, L, 0)
