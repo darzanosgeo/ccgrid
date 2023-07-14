@@ -95,6 +95,7 @@ if __name__ == '__main__':
     for I in InfP:
         for L in Loc:
             for top in range(1,random_topologies):
+
                 # create topology
                 R, R_i, max_Caps = create_topology(I, L, Loc_prob, ResProf_prob, resource_profile_small, resource_profile_large, resource_types)
 
@@ -108,6 +109,8 @@ if __name__ == '__main__':
 
                 # for different total loads -- number of total requests
                 for S in SS:
+
+
                     req = dict()
                     price = dict()
 
@@ -119,7 +122,6 @@ if __name__ == '__main__':
                         if s > S:
                             req[S].pop(s)
                             price[S].pop(s)
-
 
                     # Each service can be only served by one and only InfSP or none
                     X_a, total_Profit_a, serv_prov_a, serv_Prov_perc_a = resource_allocationSA(R, R_i, req[S], B, price[S], I, resource_types, L, 0)
@@ -163,7 +165,7 @@ if __name__ == '__main__':
                         profit_l[ii] = payments_l[ii] - K(X_l, req[S], R_i[ii], B)
                         profit_aa[ii] = U(X_a, req[S], R_i[ii], price[S]) - K(X_a, req[S], R_i[ii], B)
 
-                    surplus = sum(price[S].values()) - sum(payments.values())
+                    surplus = U(X, req[S], R, price[S]) - sum(payments.values())
                     initial_surplus = surplus
                     # surplus_h = sum(revenues_h.values()) - sum(profit.values())
                     # surplus_l = sum(revenues_l.values()) - sum(profit.values())
@@ -229,12 +231,19 @@ if __name__ == '__main__':
                     file.write("Locations = " + repr(L) + "\n")
                     file.write("Requests = " + repr(S) + "\n")
                     file.write("Utilization = " + repr(serv_Prov_perc) + "\n")
-                    file.write("VCG_payments = " + repr(print(list(payments.values()))) + "\n")
-                    file.write("Total_Profit = " + repr(sum(profit.values())) + "\n")
-                    file.write("Total_Profit_h = " + repr(sum(profit_h.values())) + "\n")
-                    file.write("Total_Profit_l = " + repr(sum(profit_l.values())) + "\n")
+                    file.write("VCG_payments = " + repr(list(payments.values())) + "\n")
+                    file.write("VCG_payments_total = " + repr(sum(payments.values())) + "\n")
+                    file.write("VSP_payments = " + repr(list(price[S].values())) + "\n")
+                    file.write("VSP_payments_total = " + repr(sum(price[S].values())) + "\n")
                     file.write("Surplus= " + repr(initial_surplus) + "\n")
-                    file.write("Final_InfSP_payments = " + repr(print(list(final_payments.values()))) + "\n")
+                    file.write("InfSP_costs = " + repr(list(np.subtract(list(payments.values()),list(profit.values())))) + "\n")
+                    file.write("InfSP_total_cost = " + repr(sum(payments.values()) - sum(profit.values())) + "\n")
+                    file.write("Total_Profit = " + repr(sum(profit.values())) + "\n")
+                    file.write("Strategic_Provider = " + repr(i) + "\n")
+                    file.write("Individual_Profit_VCG = " + repr(list(profit.values())) + "\n")
+                    file.write("Individual_Profit_VCG_l = " + repr(list(profit_l.values())) + "\n")
+                    file.write("Individual_Profit_VCG_h = " + repr(list(profit_h.values())) + "\n")
+                    file.write("Final_InfSP_payments = " + repr(list(final_payments.values())) + "\n")
                     file.write("Individual_Profits_after_surplus_distribution = " + repr(list(new_profit.values())) + "\n")
                     file.write("Individual_Profits_StandAlone= " + repr(list(profit_aa.values())) + "\n")
 
