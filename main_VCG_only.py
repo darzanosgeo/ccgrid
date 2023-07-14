@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     SS = [5, 10, 20, 30, 50, 70, 100]  # total number of service request
 
-    random_topologies = 5  # number of random topologies
+    random_topologies = 10  # number of random topologies
 
     # ##### Resources Characteristics
     # Resource types based on our example
