@@ -1,0 +1,186 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import re
+
+Results = {}
+file = open("results_NEW_TopologiesOLD.txt", "r")
+line = file.readline()
+while line != '':
+    line = file.readline()
+    if "New experiment" in line:
+        while "\n" != line:
+            line = file.readline()
+            if "Providers =" in line:
+
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Providers = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                top = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                locs = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                reqs = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                utilization = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                InfSP_payments = temp
+                for _ in range(len(InfSP_payments)):
+                    InfSP_payments[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                total_InfSP_payments = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                VSP_payments = temp
+                for _ in range(len(VSP_payments)):
+                    VSP_payments[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                total_VSP_payments = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Surplus = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                InfSP_cost = temp
+                for _ in range(len(InfSP_cost)):
+                    InfSP_cost[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                total_InfSP_cost = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                total_InfSP_Profit = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                strategic_provider = int(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Individual_Profit_VCG = temp
+                for _ in range(len(Individual_Profit_VCG)):
+                    Individual_Profit_VCG[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Final_InfSP_Payments = temp
+                for _ in range(len(Final_InfSP_Payments)):
+                    Final_InfSP_Payments[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Final_InfSP_Profit = temp
+                for _ in range(len(Final_InfSP_Profit)):
+                    Final_InfSP_Profit[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"-+?\d*\.\d+|\d+", line)
+                # = temp
+                topology = []
+                iii = 0
+                while iii != len(temp):
+                    topology.append((int(temp[iii]), int(temp[iii+1])))
+                    iii = iii + 2
+
+                if (Providers, top, locs, reqs) not in Results.keys():
+                    Results[Providers, top, locs, reqs] = dict()
+
+                Results[Providers, top, locs, reqs]['utilization'] = utilization
+                Results[Providers, top, locs, reqs]['InfSP_payments'] = InfSP_payments
+                Results[Providers, top, locs, reqs]['total_InfSP_payments'] = total_InfSP_payments
+                Results[Providers, top, locs, reqs]['VSP_payments'] = VSP_payments
+                Results[Providers, top, locs, reqs]['total_VSP_payments'] = total_VSP_payments
+                Results[Providers, top, locs, reqs]['Surplus'] = Surplus
+                Results[Providers, top, locs, reqs]['InfSP_cost'] = InfSP_cost
+                Results[Providers, top, locs, reqs]['total_InfSP_cost'] = total_InfSP_cost
+                Results[Providers, top, locs, reqs]['total_InfSP_Profit'] = total_InfSP_Profit
+                Results[Providers, top, locs, reqs]['strategic_provider'] = strategic_provider
+                Results[Providers, top, locs, reqs]['Individual_Profit_VCG'] = Individual_Profit_VCG
+                Results[Providers, top, locs, reqs]['Final_InfSP_Payments'] = Final_InfSP_Payments
+                Results[Providers, top, locs, reqs]['Final_InfSP_Profit'] = Final_InfSP_Profit
+
+
+i = 5
+T = list(np.arange(1, 34+1))
+l = 5
+R = [50]
+
+individual_Profit = []
+individual_Profit_l = []
+individual_Profit_h = []
+Final_Profit = []
+utilizationn = []
+surplus = []
+for r in R:
+    strategic_provider_individual_Profit = 0
+    stand_alone_profit = 0
+    final_profit = 0
+    utilizationn_agr = 0
+    for t in T:
+        strategic_provider = Results[i, t, l, r]['strategic_provider']
+        strategic_provider_individual_Profit += Results[i, t, l, r]['Individual_Profit_VCG'][strategic_provider-1]/len(T)
+        final_profit += Results[i, t, l, r]['Final_InfSP_Profit'][strategic_provider - 1] / len(T)
+        surplus.append(Results[i, t, l, r]['Surplus'])
+        utilizationn_agr += Results[i, t, l, r]['utilization']/len(T)
+
+    individual_Profit.append(strategic_provider_individual_Profit)
+    individual_Profit_l.append(strategic_provider_individual_Profit_l)
+    individual_Profit_h.append(strategic_provider_individual_Profit_h)
+    standAlone.append(stand_alone_profit)
+    Final_Profit.append(final_profit)
+    utilizationn.append(utilizationn_agr)
+
+
+plt.rcParams.update({'font.size': 14})
+plt.rcParams.update({'axes.labelsize': 14})
+
+
+rr = [i for i in range(1, 34*len(R)+1)]
+
+colors = plt.cm.Dark2(np.arange(len(R)*34) // 34 / (len(R)-1))
+
+plt.bar(rr, surplus, color=colors, linestyle='solid')
+
+plt.xlim(0, max(rr))
+# Add vertical gridlines at every 18th bar
+for i in range(18, len(rr), 18):
+    plt.axvline(i + 0.5, color='gray', linewidth=0.5)
+
+# Add horizontal gridlines
+plt.grid(axis='y', linestyle='--', linewidth=0.5)
+# plt.grid()
+
+# naming the x axis
+plt.xlabel('Total # of requests', fontsize=16)
+# naming the y axis
+plt.ylabel('Surplus ($/h)', fontsize=16)
+
+# Set the values at the center of each grid box
+# values = [5, 10, 20, 30, 50, 70, 100]
+# xticks = [(18*i + 18*(i+1))/2 for i in range(len(R))]
+# plt.xticks(xticks, values)
+
+# giving a title to my graph
+# plt.title('Total Profit, ' + str(i) + ' Providers, ' + str(l) + ' Locations')
+# plt.legend(['Surplus' ])
+plt.savefig('SurplusTopologies ' + str(i) + ' Providers, ' + str(l) + ' Locations', dpi=300, bbox_inches='tight')
+plt.show()
+plt.close('all')
