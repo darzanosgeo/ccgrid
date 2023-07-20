@@ -116,53 +116,57 @@ while line != '':
                 Results[Providers, top, locs, reqs]['Individual_Profit_VCG'] = Individual_Profit_VCG
                 Results[Providers, top, locs, reqs]['Final_InfSP_Payments'] = Final_InfSP_Payments
                 Results[Providers, top, locs, reqs]['Final_InfSP_Profit'] = Final_InfSP_Profit
+                Results[Providers, top, locs, reqs]['topology'] = topology
 
+X = 39
 
 i = 5
-T = list(np.arange(1, 34+1))
+T = list(np.arange(1, X+1))
 l = 5
 R = [50]
 
-individual_Profit = []
-individual_Profit_l = []
-individual_Profit_h = []
-Final_Profit = []
-utilizationn = []
-surplus = []
+
+ssurplus = []
+ttopology = {}
 for r in R:
     strategic_provider_individual_Profit = 0
     stand_alone_profit = 0
     final_profit = 0
     utilizationn_agr = 0
     for t in T:
-        strategic_provider = Results[i, t, l, r]['strategic_provider']
-        strategic_provider_individual_Profit += Results[i, t, l, r]['Individual_Profit_VCG'][strategic_provider-1]/len(T)
-        final_profit += Results[i, t, l, r]['Final_InfSP_Profit'][strategic_provider - 1] / len(T)
-        surplus.append(Results[i, t, l, r]['Surplus'])
+        ssurplus.append(Results[i, t, l, r]['Surplus'])
         utilizationn_agr += Results[i, t, l, r]['utilization']/len(T)
+        ttopology[t] = (Results[i, t, l, r]['topology'])
 
-    individual_Profit.append(strategic_provider_individual_Profit)
-    individual_Profit_l.append(strategic_provider_individual_Profit_l)
-    individual_Profit_h.append(strategic_provider_individual_Profit_h)
-    standAlone.append(stand_alone_profit)
-    Final_Profit.append(final_profit)
-    utilizationn.append(utilizationn_agr)
+topology_count = dict.fromkeys(T,0)
+for _ in range(1,len(T)+1):
+
+    cur_top = ttopology[_]
+    loc_pres = {}
+    for ii in range(1,l+1):
+        loc_pres[ii] = []
+    for cur in cur_top:
+        loc_pres[cur[1]].append(cur[0])
+    for ii in range(1,l+1):
+        if len(loc_pres[ii]) <= 1:
+            topology_count[_] += 1
+
+
+
+
 
 
 plt.rcParams.update({'font.size': 14})
 plt.rcParams.update({'axes.labelsize': 14})
 
 
-rr = [i for i in range(1, 34*len(R)+1)]
+tt = [i for i in range(1, X*len(R)+1)]
 
-colors = plt.cm.Dark2(np.arange(len(R)*34) // 34 / (len(R)-1))
+#colors = plt.cm.Dark2(np.arange(len(R)*34) // 34 / (len(R)-1))
 
-plt.bar(rr, surplus, color=colors, linestyle='solid')
+plt.bar(tt, ssurplus, color='blue', linestyle='solid')
 
-plt.xlim(0, max(rr))
-# Add vertical gridlines at every 18th bar
-for i in range(18, len(rr), 18):
-    plt.axvline(i + 0.5, color='gray', linewidth=0.5)
+plt.xlim(0, max(tt))
 
 # Add horizontal gridlines
 plt.grid(axis='y', linestyle='--', linewidth=0.5)
@@ -172,6 +176,10 @@ plt.grid(axis='y', linestyle='--', linewidth=0.5)
 plt.xlabel('Total # of requests', fontsize=16)
 # naming the y axis
 plt.ylabel('Surplus ($/h)', fontsize=16)
+
+# Loop through each value and add it on top of the bar
+for x, y, k in zip(tt, ssurplus, topology_count.values()):
+    plt.text(x, y, str(k), ha='center', va='bottom', fontsize=12)
 
 # Set the values at the center of each grid box
 # values = [5, 10, 20, 30, 50, 70, 100]

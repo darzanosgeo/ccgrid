@@ -173,7 +173,7 @@ if __name__ == '__main__':
                     print("New Total Profits", sum(new_profit.values()))
 
 
-                    file = open("results_NEW_Topologies.txt", "a")
+                    file = open("results_NEW_TopologiesOLD.txt", "a")
                     file.write("\n" + "--- New experiment --" + "\n")
                     file.write("Providers = " + repr(I) + "\n")
                     file.write("Topology = " + repr(top) + "\n")
