@@ -18,13 +18,13 @@ if __name__ == '__main__':
     ##############################
 
     # ######## System Dimensioning Parameters
-    InfP = [5]  # number of Inf Service Providers
+    InfP = [5, 10]  # number of Inf Service Providers
 
     Loc = [5]  # number of geographic locations
 
     Loc_prob = 0.35  # region density --- probability for a Provider to appear in a region
 
-    SS = [50]  # total number of service request
+    SS = [10, 20, 30, 50, 70]  # total number of service request
 
     random_topologies = 40  # number of random topologies
 
