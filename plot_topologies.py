@@ -155,7 +155,6 @@ for _ in range(1,len(T)+1):
 
 
 
-
 plt.rcParams.update({'font.size': 14})
 plt.rcParams.update({'axes.labelsize': 14})
 
@@ -165,7 +164,6 @@ tt = [i for i in range(1, X*len(R)+1)]
 #colors = plt.cm.Dark2(np.arange(len(R)*34) // 34 / (len(R)-1))
 
 plt.bar(tt, ssurplus, color='blue', linestyle='solid')
-
 plt.xlim(0, max(tt))
 
 # Add horizontal gridlines

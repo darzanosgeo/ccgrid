@@ -179,7 +179,6 @@ for ii, jj in zip(R, individual_Profit):
     plt.text(ii, jj + 1000, f'{temp}' + '%', fontsize=12, color='black', ha='right', va='bottom')
     counter += 1
 
-
 plt.xlim(0, max(R))
 plt.grid()
 
