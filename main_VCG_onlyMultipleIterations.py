@@ -18,15 +18,17 @@ if __name__ == '__main__':
     ##############################
 
     # ######## System Dimensioning Parameters
-    InfP = [5, 10]  # number of Inf Service Providers
+    InfP = [5]  # number of Inf Service Providers
 
     Loc = [5]  # number of geographic locations
 
     Loc_prob = 0.35  # region density --- probability for a Provider to appear in a region
 
-    SS = [10, 20, 30, 50, 70]  # total number of service request
+    Iterations = 10 # number of provisioning windows that will run
 
-    random_topologies = 40  # number of random topologies
+    SS = [10, 20, 30, 50, 70, 40, 50, 30, 10, 20]  # total number of service request
+
+    random_topologies = 20  # number of random topologies that will run for multiple iterations
 
     # ##### Resources Characteristics
     # Resource types based on our example
@@ -108,91 +110,131 @@ if __name__ == '__main__':
                 # Providers place bids for their resources
                 B, B_i = bidding(I, R, cost, bid_markup, max_Caps)
 
-                # Generate Requests for different total loads
-                tot_S = SS[-1]
-                # create requests
-                req_tot, req_tot_price = generate_service_requests(tot_S, L, Load_Core[1], Load_Edge[1], price_s_base, prob_region)
+                # Generate Requests for different iterations
 
-                # for different total loads -- number of total requests
-                for S in SS:
+                req = []
+                price = []
 
 
-                    req = dict()
-                    price = dict()
 
-                    req[S] = deepcopy(req_tot)
-                    price[S] = deepcopy(req_tot_price)
+                for it in range(Iterations):
+                    # create requests
+                    temp_req, temp_price = generate_service_requests(SS[it], L, Load_Core[1], Load_Edge[1], price_s_base, prob_region)
+                    req.append(temp_req)
+                    price.append(temp_price)
 
-                    # Pick only the first S requests for this simulation
-                    for s in range(1, SS[-1]+1):
-                        if s > S:
-                            req[S].pop(s)
-                            price[S].pop(s)
+                surplus = 0
+                threshold = 3500 * 25
+
+                # for different iterations - provisioning periods
+                for it in range(Iterations):
+
+
+                    # Standalone profit - Each service can be only served by one and only InfSP or none
+                    X_a, total_Profit_a, serv_prov_a, serv_Prov_perc_a = resource_allocationSA(R, R_i, req[it], B,
+                                                                                               price[it], I,
+                                                                                               resource_types, L, 0)
+                    P_a = dict()
+                    for ii in range(1,I+1):
+                        # Standalone profit of providers
+                        P_a[ii] = U(X_a, req[it], R_i[ii], price[it]) - K(X_a, req[it], R_i[ii], B)
+                        # P_a[ii] = U(X_a, req[it], R_i[ii], price[it]) - K(X_a, req[it], R_i[ii], B) - (sum(serv_prov_a)*price_m)
 
                     ##############
                     # The decentralized platform determines the resource allocation for the federated scenario
-                    X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[S], B, price[S], I, resource_types, L, price_m)
+                    X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[it], B, price[it], I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
-                    payments = VCG_revenue_sharing(X, R, R_i, B_i, req[S], B, price[S], I, resource_types, L, price_m)
-
-                    # select one provider that places a higher and lower bid - select the provider with the highest profits
-                    i = np.random.randint(1, I+1)
+                    payments = VCG_revenue_sharing(X, R, R_i, B_i, req[0], B, price[0], I, resource_types, L, price_m)
 
 
-                    profit = dict()
+                    VCG_profit = dict()
+                    KK = dict()
+                    for ii in range(1, I+1):
+                        KK[ii] = K(X, req[it], R_i[ii], B)
+                        VCG_profit[ii] = payments[ii]
+                        #VCG_profit[ii] = payments[ii] - (sum(serv_prov)*price_m)
+
+                    # calculate total deficit that the surplus pool should cover
+                    # AND the current total surplus or deficit created in this iteration
+                    tot_deficit = 0
+                    cur_surplus = 0
+                    for ii in range(1, I + 1):
+                        cur_surplus = U(X, req[it], R, price[it]) - sum(payments.values()) - (sum(serv_prov)*price_m)
+                        if VCG_profit[ii] < P_a[ii]:
+                            tot_deficit += P_a[ii] - VCG_profit[ii]
+
 
                     final_payments = dict()
+                    final_prices = dict()
 
-                    for ii in range(1, I+1):
-                        profit[ii] = payments[ii] - K(X, req[S], R_i[ii], B)
+                    surplus += cur_surplus
+                    # if total deficit can be covered by the pool
+                    if tot_deficit < surplus:
+                        # Individual rationality - Guaranteed profit
+                        for ii in range(1, I + 1):
+                            # if less profit with VCG payments
+                            if VCG_profit[ii] < P_a[ii]:
+                                final_payments[ii] = payments[ii] + P_a[ii] - VCG_profit[ii]
+                                surplus = surplus - (P_a[ii] - VCG_profit[ii]) - (sum(serv_prov)*price_m)
+                            else:
+                                final_payments[ii] = payments[ii]
 
-                    surplus = U(X, req[S], R, price[S]) - sum(payments.values())
-                    initial_surplus = surplus
-                    # surplus_h = sum(revenues_h.values()) - sum(profit.values())
-                    # surplus_l = sum(revenues_l.values()) - sum(profit.values())
+                        # if surplus is more than the threshold, then share the rest to InfSPs evenly
+                        if surplus > threshold:
+                            for ii in range(1,I+1):
+                                final_payments[ii] += (surplus-threshold)/I
+                            surplus = threshold
+                        final_prices = price[it]
+                    else: # if total deficit CANNOT be covered by the pool
+                        # modified first price auction
+                        # InfSP payments are their cost
+                        for ii in range(1, I + 1):
+                            final_payments[ii] = KK[ii]
+                            surplus -= final_payments[ii]
+                        # half of the current surplus is shared as discount to the customers
+                        for s in price[it]:
+                            final_prices[s] = price[s] - (cur_surplus/len(price[it]))/2
+                            surplus = surplus - (serv_prov[s] * (price_m + cur_surplus/len(price[it]))/2)
+
+                    final_Profit = dict()
+                    for ii in range(1,I+1):
+                        final_Profit[ii] = final_payments[ii] - KK[ii]
 
                     new_profit = dict()
                     new_profit_l = dict()
                     new_profit_h = dict()
 
+                    print(it)
+                    print("Surplus Status", surplus)
+                    print("Threshold", threshold)
+                    print("Total Profits", sum(final_Profit.values()))
+                    print("Total Profits StandAlone", sum(P_a.values()))
+                    print("Total VSP payments", sum(final_prices.values()))
+                    print("Total VCG payments", sum(final_payments.values()))
 
-
-                    print(i)
-                    print("Profit", profit)
-                    print("Total Profits", sum(profit.values()))
-                    print("Total VSP payments", sum(price[S].values()))
-                    print("Total VCG payments", sum(payments.values()))
-                    print("Surplus", initial_surplus)
-
-                    print("")
-                    print("Final payments", final_payments)
-                    print("New Profits", new_profit)
-                    # print(new_profit_h)
-                    # print(new_profit_l)
-                    print("New Total Profits", sum(new_profit.values()))
-
-
-                    file = open("results_NEW_TopologiesOLD.txt", "a")
+                    file = open("results_NEW_MultipleIterations.txt", "a")
                     file.write("\n" + "--- New experiment --" + "\n")
                     file.write("Providers = " + repr(I) + "\n")
                     file.write("Topology = " + repr(top) + "\n")
                     file.write("Locations = " + repr(L) + "\n")
-                    file.write("Requests = " + repr(S) + "\n")
+                    file.write("Iteration = " + repr(it) + "\n")
+                    file.write("Requests = " + repr(SS[it]) + "\n")
                     file.write("Utilization = " + repr(serv_Prov_perc) + "\n")
                     file.write("VCG_payments = " + repr(list(payments.values())) + "\n")
                     file.write("VCG_payments_total = " + repr(sum(payments.values())) + "\n")
-                    file.write("VSP_payments = " + repr(list(price[S].values())) + "\n")
-                    file.write("VSP_payments_total = " + repr(sum(price[S].values())) + "\n")
-                    file.write("Surplus= " + repr(initial_surplus) + "\n")
-                    file.write("InfSP_costs = " + repr(list(np.subtract(list(payments.values()),list(profit.values())))) + "\n")
-                    file.write("InfSP_total_cost = " + repr(sum(payments.values()) - sum(profit.values())) + "\n")
-                    file.write("Total_Profit = " + repr(sum(profit.values())) + "\n")
-                    file.write("Strategic_Provider = " + repr(i) + "\n")
-                    file.write("Individual_Profit_VCG = " + repr(list(profit.values())) + "\n")
                     file.write("Final_InfSP_payments = " + repr(list(final_payments.values())) + "\n")
-                    file.write("Individual_Profits_after_surplus_distribution = " + repr(list(new_profit.values())) + "\n")
-                    file.write("Topology= " + repr(topology) + "\n")
+                    file.write("Final_InfSP_payments_total = " + repr(sum(final_payments.values())) + "\n")
+                    file.write("VSP_payments = " + repr(list(final_prices.values())) + "\n")
+                    file.write("VSP_payments_total = " + repr(sum(final_prices.values())) + "\n")
+                    file.write("Surplus= " + repr(surplus) + "\n")
+                    file.write("Current Iteration Surplus= " + repr(cur_surplus) + "\n")
+                    file.write("InfSP_costs = " + repr(list(KK.values())) + "\n")
+                    file.write("InfSP_total_cost = " + repr(sum(KK.values())) + "\n")
+                    file.write("Total_Profit_Final = " + repr(sum(final_Profit.values())) + "\n")
+                    file.write("Individual_Profit_Final = " + repr(list(final_Profit.values())) + "\n")
+                    file.write("Stand_alone_profits = " + repr(list(P_a.values())) + "\n")
+
 
                     file.write("\n")
                     file.close()
