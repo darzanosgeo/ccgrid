@@ -115,8 +115,6 @@ if __name__ == '__main__':
                 req = []
                 price = []
 
-
-
                 for it in range(Iterations):
                     # create requests
                     temp_req, temp_price = generate_service_requests(SS[it], L, Load_Core[1], Load_Edge[1], price_s_base, prob_region)
@@ -124,7 +122,7 @@ if __name__ == '__main__':
                     price.append(temp_price)
 
                 surplus = 0
-                threshold = 3500 * 25
+                threshold = 3500 * 15
 
                 # for different iterations - provisioning periods
                 for it in range(Iterations):
@@ -145,14 +143,14 @@ if __name__ == '__main__':
                     X, total_Profit, serv_prov, serv_Prov_perc = resource_allocation(R, R_i, req[it], B, price[it], I, resource_types, L, price_m)
 
                     # Perform Revenue Sharing
-                    payments = VCG_revenue_sharing(X, R, R_i, B_i, req[0], B, price[0], I, resource_types, L, price_m)
+                    payments = VCG_revenue_sharing(X, R, R_i, B_i, req[it], B, price[it], I, resource_types, L, price_m)
 
 
                     VCG_profit = dict()
                     KK = dict()
                     for ii in range(1, I+1):
                         KK[ii] = K(X, req[it], R_i[ii], B)
-                        VCG_profit[ii] = payments[ii]
+                        VCG_profit[ii] = payments[ii]-KK[ii]
                         #VCG_profit[ii] = payments[ii] - (sum(serv_prov)*price_m)
 
                     # calculate total deficit that the surplus pool should cover
@@ -189,13 +187,15 @@ if __name__ == '__main__':
                     else: # if total deficit CANNOT be covered by the pool
                         # modified first price auction
                         # InfSP payments are their cost
+                        # revert surplus update
+                        surplus -= cur_surplus
                         for ii in range(1, I + 1):
                             final_payments[ii] = KK[ii]
-                            surplus -= final_payments[ii]
                         # half of the current surplus is shared as discount to the customers
+                        cur_surplus = U(X, req[it], R, price[it]) - sum(KK.values())
                         for s in price[it]:
-                            final_prices[s] = price[s] - (cur_surplus/len(price[it]))/2
-                            surplus = surplus - (serv_prov[s] * (price_m + cur_surplus/len(price[it]))/2)
+                            final_prices[s] = max(price[it][s] - (cur_surplus/len(price[it]))/2,0)
+                        surplus = surplus + cur_surplus/2
 
                     final_Profit = dict()
                     for ii in range(1,I+1):
@@ -226,7 +226,6 @@ if __name__ == '__main__':
                     file.write("Final_InfSP_payments = " + repr(list(final_payments.values())) + "\n")
                     file.write("Final_InfSP_payments_total = " + repr(sum(final_payments.values())) + "\n")
                     file.write("VSP_payments = " + repr(list(final_prices.values())) + "\n")
-                    file.write("VSP_payments_total = " + repr(sum(final_prices.values())) + "\n")
                     file.write("Surplus= " + repr(surplus) + "\n")
                     file.write("Current Iteration Surplus= " + repr(cur_surplus) + "\n")
                     file.write("InfSP_costs = " + repr(list(KK.values())) + "\n")
