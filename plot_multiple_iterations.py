@@ -157,15 +157,15 @@ plt.rcParams.update({'axes.labelsize': 14})
 
 rr = [i for i in range(1, len(R)+1)]
 
-#colors = plt.cm.Dark2(np.arange(len(R)*34) // 34 / (len(R)-1))
 
 for t in T:
-    plt.plot(rr, surplus[t], color='blue', linestyle='solid')
+    plt.plot(rr, surplus[t], color='blue', linestyle='solid', linewidth=3, marker='o', markerfacecolor='blue', markersize=10)
 
     plt.xlim(0, max(rr))
-
+    default_x_ticks = range(len(rr))
+    plt.xticks(rr, R)
     # Add horizontal gridlines
-    plt.grid(axis='y', linestyle='--', linewidth=0.5)
+    #plt.grid(axis='y', linestyle='--', linewidth=0.5)
     plt.grid()
 
     # naming the x axis
@@ -175,5 +175,5 @@ for t in T:
 
 
     plt.savefig('SurplusTopologies ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' Locations', dpi=300, bbox_inches='tight')
-    plt.show()
+    #plt.show()
     plt.close('all')

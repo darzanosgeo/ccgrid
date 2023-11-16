@@ -81,13 +81,13 @@ if __name__ == '__main__':
     Load_Core[1] = {'EMR': 100}
 
     # service price base
-    price_s_base = 1500  # $/hour
+    price_s_base = 500  # $/hour
 
     # probability of addition service region
     prob_region = 0.2
 
     # blockchain markup price
-    price_m = 0  # $/request
+    price_m = 1.05  # $/request
     ###############################
     #       Init Process          #
     ##############################
