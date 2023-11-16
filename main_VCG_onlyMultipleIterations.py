@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
     Iterations = 10 # number of provisioning windows that will run
 
-    SS = [10, 20, 30, 50, 70, 40, 50, 30, 10, 20]  # total number of service request
+    SS = [10, 20, 30, 50, 70, 40, 50, 30, 10, 20, 30, 20, 30, 50, 70, 40, 50, 70, 50, 50, 70, 40, 30, 20, 30, 20, 20, 10, 10, 20]  # total number of service request
 
     random_topologies = 20  # number of random topologies that will run for multiple iterations
 
@@ -213,7 +213,7 @@ if __name__ == '__main__':
                     print("Total VSP payments", sum(final_prices.values()))
                     print("Total VCG payments", sum(final_payments.values()))
 
-                    file = open("results_NEW_MultipleIterations.txt", "a")
+                    file = open("results_NEW2_MultipleIterations.txt", "a")
                     file.write("\n" + "--- New experiment --" + "\n")
                     file.write("Providers = " + repr(I) + "\n")
                     file.write("Topology = " + repr(top) + "\n")
