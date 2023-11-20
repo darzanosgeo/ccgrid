@@ -35,14 +35,14 @@ def generate_service_requests(S, L, Load_Core, Load_Edge, price_s, prob_region):
         # random value based on normal distribution are assigned to all components
         comp_counter = 1
         for comp_prof in Load_Core:
-            val = float(np.random.normal(1, 0.3, 1) * Load_Core[comp_prof] * mult)
+            val = float(np.random.normal(1, 0.1, 1) * Load_Core[comp_prof] * mult)
             reqs[s][comp_counter] = {'type': comp_prof, 'load': val, 'region': 0}
             comp_counter += 1
 
         # next generate the edge service components in all locations
         for l in locs:
             for comp_prof in Load_Edge:
-                val = float(np.random.normal(1, 0.3, 1) * Load_Edge[comp_prof])
+                val = float(np.random.normal(1, 0.1, 1) * Load_Edge[comp_prof])
                 reqs[s][comp_counter] = {'type': comp_prof, 'load': val, 'region': l}
                 comp_counter += 1
 
@@ -50,7 +50,8 @@ def generate_service_requests(S, L, Load_Core, Load_Edge, price_s, prob_region):
         # set the price of the service
         # the price is randomly selected based on a normal distribution for a default value multiplied by
         # the number of regions that the service is available
-        price[s] = float(np.random.normal(1, 0.3, 1) * mult * price_s)
+        # price[s] = float(np.random.normal(1, 0.3, 1) * mult * price_s)
+        price[s] = price_s + (mult-1) * price_s * (2/3) * float(np.random.normal(1, 0.1, 1))
 
         #################################
     return reqs, price

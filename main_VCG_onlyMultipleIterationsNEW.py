@@ -81,7 +81,7 @@ if __name__ == '__main__':
     Load_Core[1] = {'EMR': 100}
 
     # service price base
-    price_s_base = 500  # $/hour
+    price_s_base = 600  # $/hour
 
     # probability of addition service region
     prob_region = 0.2
@@ -145,6 +145,9 @@ if __name__ == '__main__':
                     # Perform Revenue Sharing
                     payments = VCG_revenue_sharing(X, R, R_i, B_i, req[it], B, price[it], I, resource_types, L, price_m)
 
+                    Kr = dict()
+                    for rr in range(1,len(req[it])+1):
+                        Kr[rr] = K(X,{rr:req[it][rr]}, R, B)
 
                     VCG_profit = dict()
                     KK = dict()
@@ -162,10 +165,12 @@ if __name__ == '__main__':
                         if VCG_profit[ii] < P_a[ii]:
                             tot_deficit += P_a[ii] - VCG_profit[ii]
 
+                    HEEEREE
 
                     final_payments = dict()
                     final_prices = dict()
 
+                    flag = 0
                     surplus += cur_surplus
                     # if total deficit can be covered by the pool
                     if tot_deficit < surplus:
@@ -188,13 +193,24 @@ if __name__ == '__main__':
                         # modified first price auction
                         # InfSP payments are their cost
                         # revert surplus update
+                        flag = 1
                         surplus -= cur_surplus
                         for ii in range(1, I + 1):
                             final_payments[ii] = KK[ii]
                         # half of the current surplus is shared as discount to the customers
                         cur_surplus = U(X, req[it], R, price[it]) - sum(KK.values())
+
+                        counter = 0
+                        # count how many services can be provisioned
                         for s in price[it]:
-                            final_prices[s] = max(price[it][s] - (cur_surplus/len(price[it]))/2,0)
+                            if Kr[s] == 0:
+                                counter += 1
+
+                        for s in price[it]:
+                            if Kr[s] == 0:
+                                final_prices[s] = 0
+                            else:
+                                final_prices[s] = max(price[it][s] - (cur_surplus/len(price[it]))/2,Kr[s])
                         surplus = surplus + cur_surplus/2
 
                     final_Profit = dict()
@@ -225,7 +241,9 @@ if __name__ == '__main__':
                     file.write("VCG_payments_total = " + repr(sum(payments.values())) + "\n")
                     file.write("Final_InfSP_payments = " + repr(list(final_payments.values())) + "\n")
                     file.write("Final_InfSP_payments_total = " + repr(sum(final_payments.values())) + "\n")
-                    file.write("VSP_payments = " + repr(list(final_prices.values())) + "\n")
+                    file.write("Initial_VSP_payments = " + repr(list(price[it].values())) + "\n")
+                    file.write("Final_VSP_payments = " + repr(list(final_prices.values())) + "\n")
+                    file.write("Service cost = "+ repr(list(Kr.values())) + "\n")
                     file.write("Surplus= " + repr(surplus) + "\n")
                     file.write("Current Iteration Surplus= " + repr(cur_surplus) + "\n")
                     file.write("InfSP_costs = " + repr(list(KK.values())) + "\n")
@@ -233,7 +251,7 @@ if __name__ == '__main__':
                     file.write("Total_Profit_Final = " + repr(sum(final_Profit.values())) + "\n")
                     file.write("Individual_Profit_Final = " + repr(list(final_Profit.values())) + "\n")
                     file.write("Stand_alone_profits = " + repr(list(P_a.values())) + "\n")
-
+                    file.write("First_price = "+ repr(flag) + "\n")
 
                     file.write("\n")
                     file.close()
