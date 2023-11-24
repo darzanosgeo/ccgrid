@@ -57,20 +57,6 @@ while line != '':
 
                 line = file.readline()
                 temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
-                VSP_payments = temp
-                for _ in range(len(VSP_payments)):
-                    VSP_payments[_] = float(temp[_])
-
-                line = file.readline()
-                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
-                Surplus = float(temp[0])
-
-                line = file.readline()
-                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
-                currentIt_Surplus = float(temp[0])
-
-                line = file.readline()
-                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
                 InfSP_cost = temp
                 for _ in range(len(InfSP_cost)):
                     InfSP_cost[_] = float(temp[_])
@@ -81,7 +67,7 @@ while line != '':
 
                 line = file.readline()
                 temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
-                total_Profit_Final = float(temp[0])
+                total_Profit_final = float(temp[0])
 
                 line = file.readline()
                 temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
@@ -94,6 +80,40 @@ while line != '':
                 Stand_alone_profits = temp
                 for _ in range(len(Stand_alone_profits)):
                     Stand_alone_profits[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Initial_VSP_payments = temp
+                for _ in range(len(Initial_VSP_payments)):
+                    Initial_VSP_payments[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Final_VSP_payments = temp
+                for _ in range(len(Final_VSP_payments)):
+                    Final_VSP_payments[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Service_cost = temp
+                for _ in range(len(Service_cost)):
+                    Service_cost[_] = float(temp[_])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Surplus = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                Threshold = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                currentIt_Surplus = float(temp[0])
+
+                line = file.readline()
+                temp = re.findall(r"[-+]?\d*\.\d+|\d+", line)
+                first_price = float(temp[0])
 
                 line = file.readline()
                 temp = re.findall(r"-+?\d*\.\d+|\d+", line)
@@ -109,23 +129,26 @@ while line != '':
                     Results[Providers, top, locs, it, reqs] = dict()
 
                 Results[Providers, top, locs, it, reqs]['utilization'] = utilization
-                Results[Providers, top, locs, it, reqs]['VSP_payments'] = VSP_payments
+                Results[Providers, top, locs, it, reqs]['Initial_VSP_payments'] = Initial_VSP_payments
+                Results[Providers, top, locs, it, reqs]['Final_VSP_payments'] = Initial_VSP_payments
                 Results[Providers, top, locs, it, reqs]['Surplus'] = Surplus
+                Results[Providers, top, locs, it, reqs]['Cur_Surplus'] = currentIt_Surplus
                 Results[Providers, top, locs, it, reqs]['InfSP_cost'] = InfSP_cost
                 Results[Providers, top, locs, it, reqs]['total_InfSP_cost'] = total_InfSP_cost
-                Results[Providers, top, locs, it, reqs]['total_Profit_Final'] = total_Profit_Final
+                Results[Providers, top, locs, it, reqs]['total_Profit_Final'] = total_Profit_final
                 Results[Providers, top, locs, it, reqs]['Individual_Profit_final'] = Individual_Profit_final
                 Results[Providers, top, locs, it, reqs]['Stand_alone_profits'] = Stand_alone_profits
                 Results[Providers, top, locs, it, reqs]['VCG_Payments'] = VCG_payments
                 Results[Providers, top, locs, it, reqs]['Final_InfSP_Payments'] = Final_InfSP_payments
                 Results[Providers, top, locs, it, reqs]['topology'] = topology
+                Results[Providers, top, locs, it, reqs]['first_price'] = first_price
 
-X = 13
+X = 20
 
 I = 5
 T = list(np.arange(1, X+1))
 l = 5
-R = [10, 20, 30, 50, 70, 40, 50, 30, 10, 20]
+R = [10, 10, 10, 10, 20, 30, 50, 50, 30, 50, 30, 10, 20, 30, 30, 50, 50, 60, 50, 50, 50, 50, 40, 10, 20, 10, 10, 10, 10, 10]
 
 surplus = {}
 ind_fin_prof = {}

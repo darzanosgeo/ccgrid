@@ -24,9 +24,9 @@ if __name__ == '__main__':
 
     Loc_prob = 0.35  # region density --- probability for a Provider to appear in a region
 
-    Iterations = 10 # number of provisioning windows that will run
+    Iterations = 30 # number of provisioning windows that will run
 
-    SS = [10, 20, 30, 50, 70, 40, 50, 30, 10, 20, 30, 20, 30, 50, 70, 40, 50, 70, 50, 50, 70, 40, 30, 20, 10, 20, 20, 10, 10, 20]  # total number of service request
+    SS = [10, 10, 10, 10, 20, 30, 50, 50, 30, 50, 30, 10, 20, 30, 30, 50, 50, 60, 50, 50, 50, 50, 40, 10, 20, 10, 10, 10, 10, 10]  # total number of service request
 
     random_topologies = 20  # number of random topologies that will run for multiple iterations
 
@@ -87,7 +87,9 @@ if __name__ == '__main__':
     prob_region = 0.2
 
     # blockchain markup price
-    price_m = 1.05  # $/request
+    price_m = 0  # $/request
+
+    threshold = 1000 * 15
     ###############################
     #       Init Process          #
     ##############################
@@ -122,7 +124,7 @@ if __name__ == '__main__':
                     price.append(temp_price)
 
                 surplus = 0
-                threshold = 3500 * 15
+
 
                 # for different iterations - provisioning periods
                 for it in range(Iterations):
@@ -136,7 +138,6 @@ if __name__ == '__main__':
                     for ii in range(1,I+1):
                         # Standalone profit of providers
                         P_a[ii] = U(X_a, req[it], R_i[ii], price[it]) - K(X_a, req[it], R_i[ii], B)
-                        # P_a[ii] = U(X_a, req[it], R_i[ii], price[it]) - K(X_a, req[it], R_i[ii], B) - (sum(serv_prov_a)*price_m)
 
                     ##############
                     # The decentralized platform determines the resource allocation for the federated scenario
@@ -165,8 +166,6 @@ if __name__ == '__main__':
                         if VCG_profit[ii] < P_a[ii]:
                             tot_deficit += P_a[ii] - VCG_profit[ii]
 
-                    HEEEREE
-
                     final_payments = dict()
                     final_prices = dict()
 
@@ -178,8 +177,10 @@ if __name__ == '__main__':
                         for ii in range(1, I + 1):
                             # if less profit with VCG payments
                             if VCG_profit[ii] < P_a[ii]:
-                                final_payments[ii] = payments[ii] + P_a[ii] - VCG_profit[ii]
-                                surplus = surplus - (P_a[ii] - VCG_profit[ii]) - (sum(serv_prov)*price_m)
+                                final_payments[ii] = payments[ii] + (P_a[ii] - VCG_profit[ii])
+                                # surplus = surplus - (P_a[ii] - VCG_profit[ii]) - (sum(serv_prov)*price_m)
+                                surplus = surplus - (P_a[ii] - VCG_profit[ii])
+                                cur_surplus = cur_surplus - (P_a[ii] - VCG_profit[ii])
                             else:
                                 final_payments[ii] = payments[ii]
 
@@ -188,46 +189,58 @@ if __name__ == '__main__':
                             for ii in range(1,I+1):
                                 final_payments[ii] += (surplus-threshold)/I
                             surplus = threshold
-                        final_prices = price[it]
+
+                        final_prices = price[it].copy()
+                        for ss in range(1,len(serv_prov)+1):
+                            if serv_prov[ss-1] == 0:
+                                final_prices[ss] = 0
+
                     else: # if total deficit CANNOT be covered by the pool
                         # modified first price auction
                         # InfSP payments are their cost
                         # revert surplus update
-                        flag = 1
                         surplus -= cur_surplus
-                        for ii in range(1, I + 1):
-                            final_payments[ii] = KK[ii]
-                        # half of the current surplus is shared as discount to the customers
-                        cur_surplus = U(X, req[it], R, price[it]) - sum(KK.values())
+                        cur_surplus = U(X, req[it], R, price[it]) - sum(KK.values()) - (sum(serv_prov)*price_m)
+                        flag = 1
+                        # if the current surplus is enough to cover the individual rationality constraint
+                        if cur_surplus > sum(P_a.values()):
 
-                        counter = 0
-                        # count how many services can be provisioned
-                        for s in price[it]:
-                            if Kr[s] == 0:
-                                counter += 1
+                            for ii in range(1, I + 1):
+                                final_payments[ii] = KK[ii] + P_a[ii]
+                                cur_surplus -= P_a[ii]
 
-                        for s in price[it]:
-                            if Kr[s] == 0:
-                                final_prices[s] = 0
-                            else:
-                                final_prices[s] = max(price[it][s] - (cur_surplus/len(price[it]))/2,Kr[s])
-                        surplus = surplus + cur_surplus/2
+                            counter = 0
+                            # count how many services can be provisioned
+                            for s in price[it]:
+                                if Kr[s] != 0:
+                                    counter += 1
 
+                            # determine final prices by sharing the rest of surplus among customer and the pool
+                            for s in price[it]:
+                                if Kr[s] == 0:
+                                    final_prices[s] = 0
+                                else:
+                                    final_prices[s] = price[it][s] - (cur_surplus / 2) / counter
+                            surplus = surplus + cur_surplus / 2
+                        #
+                        # if not, then fall back to standalone
+                        else:
+                            flag = 2
+                            # determine final prices by sharing the rest of surplus among customer and the pool
+                            for rr in range(1,len(req[it])+1):
+                                if K(X_a,{rr:req[it][rr]}, R, B) == 0:
+                                    final_prices[rr] = 0
+                                else:
+                                    final_prices[rr] = price[it][rr]
+
+                            for ii in range(1, I + 1):
+                                final_payments[ii] = U(X_a, req[it], R_i[ii], price[it])
+
+
+                    # calculate final profit
                     final_Profit = dict()
                     for ii in range(1,I+1):
                         final_Profit[ii] = final_payments[ii] - KK[ii]
-
-                    new_profit = dict()
-                    new_profit_l = dict()
-                    new_profit_h = dict()
-
-                    print(it)
-                    print("Surplus Status", surplus)
-                    print("Threshold", threshold)
-                    print("Total Profits", sum(final_Profit.values()))
-                    print("Total Profits StandAlone", sum(P_a.values()))
-                    print("Total VSP payments", sum(final_prices.values()))
-                    print("Total VCG payments", sum(final_payments.values()))
 
                     file = open("results_NEW2_MultipleIterations.txt", "a")
                     file.write("\n" + "--- New experiment --" + "\n")
@@ -241,16 +254,17 @@ if __name__ == '__main__':
                     file.write("VCG_payments_total = " + repr(sum(payments.values())) + "\n")
                     file.write("Final_InfSP_payments = " + repr(list(final_payments.values())) + "\n")
                     file.write("Final_InfSP_payments_total = " + repr(sum(final_payments.values())) + "\n")
-                    file.write("Initial_VSP_payments = " + repr(list(price[it].values())) + "\n")
-                    file.write("Final_VSP_payments = " + repr(list(final_prices.values())) + "\n")
-                    file.write("Service cost = "+ repr(list(Kr.values())) + "\n")
-                    file.write("Surplus= " + repr(surplus) + "\n")
-                    file.write("Current Iteration Surplus= " + repr(cur_surplus) + "\n")
                     file.write("InfSP_costs = " + repr(list(KK.values())) + "\n")
                     file.write("InfSP_total_cost = " + repr(sum(KK.values())) + "\n")
                     file.write("Total_Profit_Final = " + repr(sum(final_Profit.values())) + "\n")
                     file.write("Individual_Profit_Final = " + repr(list(final_Profit.values())) + "\n")
                     file.write("Stand_alone_profits = " + repr(list(P_a.values())) + "\n")
+                    file.write("Initial_VSP_payments = " + repr(list(price[it].values())) + "\n")
+                    file.write("Final_VSP_payments = " + repr(list(final_prices.values())) + "\n")
+                    file.write("Service cost = "+ repr(list(Kr.values())) + "\n")
+                    file.write("Surplus= " + repr(surplus) + "\n")
+                    file.write("Threshold= " + repr(threshold) + "\n")
+                    file.write("Current Iteration Surplus= " + repr(cur_surplus) + "\n")
                     file.write("First_price = "+ repr(flag) + "\n")
 
                     file.write("\n")

@@ -99,23 +99,39 @@ def resource_allocationSA(R, R_i, S, B, price, I, resource_types, L,price_m):
         return -1
 
     # ##############  STRUCTURE THE SOLUTION OUTPUT  ###############
-    sol_var = m.getAttr(GRB.Attr.X)
-    sol_obj = m.objVal
+    try:
+        sol_var = m.getAttr(GRB.Attr.X)
+    except:
+        sol_var = 0
 
-    x = {}
-    count = 0
+    if sol_var != 0:
+        sol_obj = m.objVal
 
-    for r in R:
-        for s in S:
-            for sigma in S[s]:
-                x[r, s, sigma] = sol_var[count]
-                count += 1
-                if x[r, s, sigma] > 0.99:
-                    x[r, s, sigma] = 1
-                elif x[r, s, sigma] <0.01:
+        x = {}
+        count = 0
+
+        for r in R:
+            for s in S:
+                for sigma in S[s]:
+                    x[r, s, sigma] = sol_var[count]
+                    count += 1
+                    if x[r, s, sigma] > 0.99:
+                        x[r, s, sigma] = 1
+                    elif x[r, s, sigma] <0.01:
+                        x[r, s, sigma] = 0
+                    else:
+                        stop = 0
+    else:
+        sol_obj = 0
+
+        x = {}
+        count = 0
+
+        for r in R:
+            for s in S:
+                for sigma in S[s]:
                     x[r, s, sigma] = 0
-                else:
-                    stop = 0
+
 
 
     # double check results
