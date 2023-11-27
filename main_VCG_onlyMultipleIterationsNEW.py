@@ -242,14 +242,15 @@ if __name__ == '__main__':
                     for ii in range(1,I+1):
                         final_Profit[ii] = final_payments[ii] - KK[ii]
 
-                    file = open("results_NEW2_MultipleIterations.txt", "a")
+                    file = open("results_NEW3_MultipleIterations.txt", "a")
                     file.write("\n" + "--- New experiment --" + "\n")
                     file.write("Providers = " + repr(I) + "\n")
                     file.write("Topology = " + repr(top) + "\n")
                     file.write("Locations = " + repr(L) + "\n")
                     file.write("Iteration = " + repr(it) + "\n")
                     file.write("Requests = " + repr(SS[it]) + "\n")
-                    file.write("Utilization = " + repr(serv_Prov_perc) + "\n")
+                    file.write("Utilization_Fed = " + repr(serv_Prov_perc) + "\n")
+                    file.write("Utilization_Stnd = " + repr(serv_Prov_perc_a) + "\n")
                     file.write("VCG_payments = " + repr(list(payments.values())) + "\n")
                     file.write("VCG_payments_total = " + repr(sum(payments.values())) + "\n")
                     file.write("Final_InfSP_payments = " + repr(list(final_payments.values())) + "\n")
