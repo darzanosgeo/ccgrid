@@ -214,9 +214,9 @@ for t in T:
     plt.grid()
 
     # naming the x axis
-    plt.xlabel('Total # of requests', fontsize=16)
+    plt.xlabel('Total # of requests in each iteration', fontsize=16)
     # naming the y axis
-    plt.ylabel('Surplus ($/h)', fontsize=16)
+    plt.ylabel('Surplus Balance ($/h)', fontsize=16)
 
     counter = 0
     for ii, jj in zip(rr, surplus[t]):
@@ -233,19 +233,15 @@ for t in T:
     tot_stand= sum(sum_stand_prof[t])
 
 
-    fed_perc = sum(top_utilization_fed[t])/sum(R)
-    stand_perc = sum(top_utilization_stnd[t])/sum(R)
+    fed_perc = sum(top_utilization_fed[t])/sum(R) * 100
+    stand_perc = sum(top_utilization_stnd[t])/sum(R) * 100
 
-    if t == 18:
-        plt.text(ii-4, max(surplus[t]) +1500, 'Total Profit Increase Achieve='+str(int(Profit_increase))+'%, '+ 'Total Federation Profit='+str(int(tot_prof))+', ('+ fed_perc+'% of the requests served)'+' Total Standlone Profit='+str(int(tot_stand))+', ('+ stand_perc+'% of the requests served)', fontsize=12, color='green', ha='right', va='bottom')
-    else:
-        plt.text(ii - 4, max(surplus[t]) + 500, 'Total Federation Profit Increase=' + str(
-            int(Profit_increase)) + '%, ' + 'Total Federation Profit=' + str(
-            int(tot_prof)) + ', Total Standlone Profit=' + str(int(tot_stand)), fontsize=12, color='green', ha='right',
-                 va='bottom')
+
+    plt.text(ii , max(surplus[t]) + 1200, 'Total Profit Increase Achieved='+str(int(Profit_increase))+'%, '+'Total Federation Profit='+ str(int(tot_prof))+' ('+ str(int(fed_perc))+'% of the requests served)'+', Total Standlone Profit=' +str(int(tot_stand))+' ('+ str(int(stand_perc))+'% of the requests served)', fontsize=12, color='black', ha='right', va='bottom')
     plt.legend(['Suplus Balance'])
     plt.savefig('Surplus_Topologies,' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' topology', dpi=300, bbox_inches='tight')
-    plt.show()
+    if t == 14 or t == 15 or t == 13:
+        plt.show()
 
 
 
@@ -262,6 +258,7 @@ for t in T:
                  markersize=10)
 
         plt.xlim(0, max(rr))
+        plt.ylim(0, 3500)
         default_x_ticks = range(len(rr))
         plt.xticks(rr, R)
         # Add horizontal gridlines
@@ -269,162 +266,164 @@ for t in T:
         plt.grid()
 
         # naming the x axis
-        plt.xlabel('Total # of requests', fontsize=16)
+        plt.xlabel('Total # of requests in each iteration', fontsize=18)
         # naming the y axis
-        plt.ylabel('Profit ($/h)', fontsize=16)
+        plt.ylabel('Profit ($/h)', fontsize=18)
+        plt.legend(['Profit when in Federation','Profit when operating alone'],fontsize=18)
 
         plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' Topology' + str(i) + 'Provider', dpi=300,
                     bbox_inches='tight')
-        # plt.show()
+        if t == 15:
+            plt.show()
         plt.close('all')
 
-    if t == 4:
-        plt.plot(rr, ind_fin_prof[t, 5], color='black', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 5], color='black', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 3], color='blue', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 3], color='blue', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 2], color='green', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='green',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 2], color='green', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='green',
-                 markersize=10)
-
-        plt.xlim(0, max(rr))
-        default_x_ticks = range(len(rr))
-        plt.xticks(rr, R)
-        # Add horizontal gridlines
-        # plt.grid(axis='y', linestyle='--', linewidth=0.5)
-        plt.grid()
-
-        # naming the x axis
-        plt.xlabel('Total # of requests', fontsize=16)
-        # naming the y axis
-        plt.ylabel('Profit ($/h)', fontsize=16)
-
-        plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
-            bbox_inches='tight')
-        # plt.show()
-        plt.close('all')
-
-    if t == 12:
-        plt.plot(rr, ind_fin_prof[t, 4], color='black', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 4], color='black', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 5], color='blue', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 5], color='blue', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 1], color='green', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 1], color='green', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='blue',
-                 markersize=10)
-
-        plt.xlim(0, max(rr))
-        default_x_ticks = range(len(rr))
-        plt.xticks(rr, R)
-        # Add horizontal gridlines
-        # plt.grid(axis='y', linestyle='--', linewidth=0.5)
-        plt.grid()
-
-        # naming the x axis
-        plt.xlabel('Total # of requests', fontsize=16)
-        # naming the y axis
-        plt.ylabel('Profit ($/h)', fontsize=16)
-
-        plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(
-            t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
-                    bbox_inches='tight')
-        # plt.show()
-        plt.close('all')
-
-    if t == 16:
-        plt.plot(rr, ind_fin_prof[t, 1], color='black', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 1], color='black', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 3], color='blue', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 3], color='blue', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 5], color='green', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 5], color='green', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='blue',
-                 markersize=10)
-
-        plt.xlim(0, max(rr))
-        default_x_ticks = range(len(rr))
-        plt.xticks(rr, R)
-        # Add horizontal gridlines
-        # plt.grid(axis='y', linestyle='--', linewidth=0.5)
-        plt.grid()
-
-        # naming the x axis
-        plt.xlabel('Total # of requests', fontsize=16)
-        # naming the y axis
-        plt.ylabel('Profit ($/h)', fontsize=16)
-
-        plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(
-            t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
-                    bbox_inches='tight')
-        # plt.show()
-        plt.close('all')
-
-    if t == 18:
-        plt.plot(rr, ind_fin_prof[t, 2], color='black', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 2], color='black', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='black',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 4], color='blue', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 4], color='blue', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, ind_fin_prof[t, 5], color='green', linestyle='solid', linewidth=3, marker='o',
-                 markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, 5], color='green', linestyle='dashed', linewidth=3, marker='',
-                 markerfacecolor='blue',
-                 markersize=10)
-
-        plt.xlim(0, max(rr))
-        default_x_ticks = range(len(rr))
-        plt.xticks(rr, R)
-        # Add horizontal gridlines
-        # plt.grid(axis='y', linestyle='--', linewidth=0.5)
-        plt.grid()
-
-        # naming the x axis
-        plt.xlabel('Total # of requests', fontsize=16)
-        # naming the y axis
-        plt.ylabel('Profit ($/h)', fontsize=16)
-
-        plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(
-            t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
-                    bbox_inches='tight')
-        # plt.show()
-        plt.close('all')
+    # if t == 4:
+    #     plt.plot(rr, ind_fin_prof[t, 5], color='black', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 5], color='black', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 3], color='blue', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 3], color='blue', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 2], color='green', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='green',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 2], color='green', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='green',
+    #              markersize=10)
+    #
+    #     plt.xlim(0, max(rr))
+    #     default_x_ticks = range(len(rr))
+    #     plt.xticks(rr, R)
+    #     # Add horizontal gridlines
+    #     # plt.grid(axis='y', linestyle='--', linewidth=0.5)
+    #     plt.grid()
+    #
+    #     # naming the x axis
+    #     plt.xlabel('Total # of requests', fontsize=16)
+    #     # naming the y axis
+    #     plt.ylabel('Profit ($/h)', fontsize=16)
+    #
+    #     plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
+    #         bbox_inches='tight')
+    #     # plt.show()
+    #     plt.close('all')
+    #
+    # if t == 12:
+    #     plt.plot(rr, ind_fin_prof[t, 4], color='black', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 4], color='black', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 5], color='blue', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 5], color='blue', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 1], color='green', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 1], color='green', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #
+    #     plt.xlim(0, max(rr))
+    #     default_x_ticks = range(len(rr))
+    #     plt.xticks(rr, R)
+    #     # Add horizontal gridlines
+    #     # plt.grid(axis='y', linestyle='--', linewidth=0.5)
+    #     plt.grid()
+    #
+    #     # naming the x axis
+    #     plt.xlabel('Total # of requests', fontsize=16)
+    #     # naming the y axis
+    #     plt.ylabel('Profit ($/h)', fontsize=16)
+    #
+    #     plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(
+    #         t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
+    #                 bbox_inches='tight')
+    #     # plt.show()
+    #     plt.close('all')
+    #
+    # if t == 16:
+    #     plt.plot(rr, ind_fin_prof[t, 1], color='black', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 1], color='black', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 3], color='blue', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 3], color='blue', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 5], color='green', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 5], color='green', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #
+    #     plt.xlim(0, max(rr))
+    #     default_x_ticks = range(len(rr))
+    #     plt.xticks(rr, R)
+    #     # Add horizontal gridlines
+    #     # plt.grid(axis='y', linestyle='--', linewidth=0.5)
+    #     plt.grid()
+    #
+    #     # naming the x axis
+    #     plt.xlabel('Total # of requests', fontsize=16)
+    #     # naming the y axis
+    #     plt.ylabel('Profit ($/h)', fontsize=16)
+    #
+    #     plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(
+    #         t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
+    #                 bbox_inches='tight')
+    #     # plt.show()
+    #     plt.close('all')
+    #
+    # if t == 18:
+    #     plt.plot(rr, ind_fin_prof[t, 2], color='black', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 2], color='black', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 4], color='blue', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 4], color='blue', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, ind_fin_prof[t, 5], color='green', linestyle='solid', linewidth=3, marker='o',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, 5], color='green', linestyle='dashed', linewidth=3, marker='',
+    #              markerfacecolor='blue',
+    #              markersize=10)
+    #
+    #     plt.xlim(0, max(rr))
+    #     default_x_ticks = range(len(rr))
+    #     plt.xticks(rr, R)
+    #     # Add horizontal gridlines
+    #     # plt.grid(axis='y', linestyle='--', linewidth=0.5)
+    #     plt.grid()
+    #
+    #     # naming the x axis
+    #     plt.xlabel('Total # of requests', fontsize=16)
+    #     # naming the y axis
+    #     plt.ylabel('Profit ($/h)', fontsize=16)
+    #
+    #     plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(
+    #         t) + ' Topology' + 'Multiple' + 'Provider', dpi=300,
+    #                 bbox_inches='tight')
+    #     # plt.show()
+    #     plt.close('all')
