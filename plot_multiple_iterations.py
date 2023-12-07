@@ -204,28 +204,84 @@ rr = [i for i in range(1, len(R)+1)]
 
 
 for t in T:
-    plt.plot(rr, surplus[t], color='blue', linestyle='solid', linewidth=3, marker='o', markerfacecolor='blue', markersize=10)
+    # if t != 14 and t != 13 and t!=16:
+    if t != 14 and t != 13:
+        continue
+    if t == 13:
+        plt.plot(rr, surplus[t], color='blue', linestyle='solid', linewidth=3, marker='o', markerfacecolor='blue', markersize=10)
 
-    plt.xlim(0, max(rr))
-    default_x_ticks = range(len(rr))
-    plt.xticks(rr, R)
-    # Add horizontal gridlines
-    #plt.grid(axis='y', linestyle='--', linewidth=0.5)
-    plt.grid()
+        plt.xlim(0, max(rr))
+        default_x_ticks = range(len(rr))
+        plt.xticks(rr, R)
+        # Add horizontal gridlines
+        #plt.grid(axis='y', linestyle='--', linewidth=0.5)
+        plt.grid()
 
-    # naming the x axis
-    plt.xlabel('Total # of requests in each iteration', fontsize=16)
-    # naming the y axis
-    plt.ylabel('Surplus Balance ($/h)', fontsize=16)
+        # naming the x axis
+        plt.xlabel('Total # of requests in each iteration', fontsize=16)
+        # naming the y axis
+        plt.ylabel('Surplus Balance ($/h)', fontsize=16)
+        plt.grid()
 
-    counter = 0
-    for ii, jj in zip(rr, surplus[t]):
-        if first_price[t][ii-1] == 0:
-            temp = 'V'
-        else:
-            temp = 'F'
-        plt.text(ii-0.3, jj + 100, temp , fontsize=12, color='black', ha='right', va='bottom')
-        counter += 1
+        counter = 0
+        for ii, jj in zip(rr, surplus[t]):
+            if first_price[t][ii - 1] == 0:
+                temp = 'V'
+            else:
+                temp = 'F'
+            plt.text(ii - 0.3, jj + 100, temp, fontsize=12, color='black', ha='right', va='bottom')
+            counter += 1
+
+    if t == 14:
+        plt.plot(rr, surplus[t], color='red', linestyle='solid', linewidth=3, marker='X', markerfacecolor='red',
+                 markersize=10)
+
+        plt.xlim(0, max(rr))
+        default_x_ticks = range(len(rr))
+        plt.xticks(rr, R)
+        # Add horizontal gridlines
+        # plt.grid(axis='y', linestyle='--', linewidth=0.5)
+        plt.grid()
+
+        # naming the x axis
+        plt.xlabel('Total # of requests in each iteration', fontsize=16)
+        # naming the y axis
+        plt.ylabel('Surplus Balance ($/h)', fontsize=16)
+
+        counter = 0
+        for ii, jj in zip(rr, surplus[t]):
+            if first_price[t][ii - 1] == 0:
+                temp = 'V'
+            else:
+                temp = 'F'
+            plt.text(ii + 0.3, jj  -1400, temp, fontsize=12, color='black', ha='right', va='bottom')
+            counter += 1
+
+    # if t == 16:
+    #     plt.plot(rr, surplus[t], color='green', linestyle='solid', linewidth=3, marker='+', markerfacecolor='green',
+    #              markersize=10)
+    #
+    #     plt.xlim(0, max(rr))
+    #     default_x_ticks = range(len(rr))
+    #     plt.xticks(rr, R)
+    #     # Add horizontal gridlines
+    #     # plt.grid(axis='y', linestyle='--', linewidth=0.5)
+    #     plt.grid()
+    #
+    #     # naming the x axis
+    #     plt.xlabel('Total # of requests in each iteration', fontsize=16)
+    #     # naming the y axis
+    #     plt.ylabel('Surplus Balance ($/h)', fontsize=16)
+    #
+    #     counter = 0
+    #     for ii, jj in zip(rr, surplus[t]):
+    #         if first_price[t][ii - 1] == 0:
+    #             temp = 'V'
+    #         else:
+    #             temp = 'F'
+    #         plt.text(ii + 0.3, jj  -1400, temp, fontsize=12, color='black', ha='right', va='bottom')
+    #         counter += 1
+
 
 
     Profit_increase = sum(sum_prof_increase[t])/sum(sum_stand_prof[t])*100
@@ -237,45 +293,45 @@ for t in T:
     stand_perc = sum(top_utilization_stnd[t])/sum(R) * 100
 
 
-    plt.text(ii , max(surplus[t]) + 1200, 'Total Profit Increase Achieved='+str(int(Profit_increase))+'%, '+'Total Federation Profit='+ str(int(tot_prof))+' ('+ str(int(fed_perc))+'% of the requests served)'+', Total Standlone Profit=' +str(int(tot_stand))+' ('+ str(int(stand_perc))+'% of the requests served)', fontsize=12, color='black', ha='right', va='bottom')
-    plt.legend(['Suplus Balance'])
+    # plt.text(ii , max(surplus[t]) + 1200, 'Total Profit Increase Achieved='+str(int(Profit_increase))+'%, '+'Total Federation Profit='+ str(int(tot_prof))+' ('+ str(int(fed_perc))+'% of the requests served)'+', Total Standlone Profit=' +str(int(tot_stand))+' ('+ str(int(stand_perc))+'% of the requests served)', fontsize=12, color='black', ha='right', va='bottom')
+    plt.legend(['Topology 1 - always surplus', 'Topology 2 - always deficit '])
     plt.savefig('Surplus_Topologies,' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' topology', dpi=300, bbox_inches='tight')
-    if t == 14 or t == 15 or t == 13:
-        plt.show()
+    # if t == 14 or t == 15 or t == 13:
+    #     plt.show()
 
 
 
-    plt.close('all')
+    # plt.close('all')
 
     ################################################################################################
 
-    for i in range(1,I+1):
-
-        plt.plot(rr, ind_fin_prof[t,i], color='blue', linestyle='solid', linewidth=3, marker='o', markerfacecolor='blue',
-                 markersize=10)
-        plt.plot(rr, stand_al_prof[t, i], color='black', linestyle='solid', linewidth=3, marker='x',
-                 markerfacecolor='black',
-                 markersize=10)
-
-        plt.xlim(0, max(rr))
-        plt.ylim(0, 3500)
-        default_x_ticks = range(len(rr))
-        plt.xticks(rr, R)
-        # Add horizontal gridlines
-        # plt.grid(axis='y', linestyle='--', linewidth=0.5)
-        plt.grid()
-
-        # naming the x axis
-        plt.xlabel('Total # of requests in each iteration', fontsize=18)
-        # naming the y axis
-        plt.ylabel('Profit ($/h)', fontsize=18)
-        plt.legend(['Profit when in Federation','Profit when operating alone'],fontsize=18)
-
-        plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' Topology' + str(i) + 'Provider', dpi=300,
-                    bbox_inches='tight')
-        if t == 15:
-            plt.show()
-        plt.close('all')
+    # for i in range(1,I+1):
+    #
+    #     plt.plot(rr, ind_fin_prof[t,i], color='blue', linestyle='solid', linewidth=3, marker='o', markerfacecolor='blue',
+    #              markersize=10)
+    #     plt.plot(rr, stand_al_prof[t, i], color='black', linestyle='solid', linewidth=3, marker='x',
+    #              markerfacecolor='black',
+    #              markersize=10)
+    #
+    #     plt.xlim(0, max(rr))
+    #     plt.ylim(0, 3500)
+    #     default_x_ticks = range(len(rr))
+    #     plt.xticks(rr, R)
+    #     # Add horizontal gridlines
+    #     # plt.grid(axis='y', linestyle='--', linewidth=0.5)
+    #     plt.grid()
+    #
+    #     # naming the x axis
+    #     plt.xlabel('Total # of requests in each iteration', fontsize=18)
+    #     # naming the y axis
+    #     plt.ylabel('Profit ($/h)', fontsize=18)
+    #     plt.legend(['Profit when in Federation','Profit when operating alone'],fontsize=18)
+    #
+    #     plt.savefig('Profit_Topologies, ' + str(i) + ' Providers, ' + str(l) + ' Locations' + str(t) + ' Topology' + str(i) + 'Provider', dpi=300,
+    #                 bbox_inches='tight')
+    #     if t == 15:
+    #         plt.show()
+    #     plt.close('all')
 
     # if t == 4:
     #     plt.plot(rr, ind_fin_prof[t, 5], color='black', linestyle='solid', linewidth=3, marker='o',
